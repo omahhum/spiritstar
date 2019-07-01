@@ -1,8 +1,14 @@
-## Welcome to Spiritstar.org in GitHub Pages
+## Spiritstar 星靈神念國際基金會
 
-You can use the [editor on GitHub](https://github.com/omahhum/spiritstar/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+本基金會成立於2009年4月，註冊於巴拿馬。
+董事長：Chang Yu-Hsin
+本基金會以推動社會祥和進步，提昇全球華人生命品質，幫助更多人獲得幸福生活為主要宗旨。
+提供各種身心靈成長訊息分享、課程規劃、理財資訊及工具，幫助大家獲得財務與心靈的自由。
+並就人類永續生存發展議題，規劃能源、自然農法、生態、科技.....等研討方向。
+基金會會員分佈台灣、日本、英國、新加坡等國家。 
+目前以台灣最為活躍。
+基金會的運作資金，皆來自於董事會的支持，及會員贊助。 不會派人以任何方式募款。
+FaceBook專頁：https://www.facebook.com/SpiritstarFoundation/ 
 
 ### Markdown
 

@@ -68,22 +68,20 @@ async function saveMemberData(data) {
   const user = auth.currentUser;
   if (!user) throw new Error("未登入");
 
-  const payload = {
+  const payload = new URLSearchParams({
     ...data,
     email: user.email
-  };
+  });
 
   const response = await fetch(APPS_SCRIPT_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: payload
   });
 
+  const text = await response.text();
   if (!response.ok) {
     throw new Error('儲存失敗，請稍後再試');
   }
-
-  return await response.json();
 }
 
 /**

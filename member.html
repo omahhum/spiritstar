@@ -10,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/top-menu.js" defer></script>
   <style>
     .page-header { padding-top:100px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
     .form-input { width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.75rem 1rem;outline:none;transition:border .3s;font-family:'Noto Sans TC',sans-serif; }
@@ -115,7 +116,7 @@
           <!-- 推薦人 -->
           <div style="margin-bottom:1.2rem;">
             <label class="form-label">推薦人</label>
-            <input type="text" name="referrer" id="inputReferrer" class="form-input" placeholder="（選填，請填寫推薦人姓名">
+            <input type="text" name="referrer" id="inputReferrer" class="form-input" placeholder="（選填，請填寫推薦人姓名）">
           </div>
 
           <!-- 郵遞區號 -->
@@ -153,10 +154,9 @@
   <p class="footer-copy">© 2026 聖輪宗 HolyChakra Spiritstar.</p>
 </footer>
 
-<script src="js/auth.js" defer></script>
-<script src="js/top-menu.js" defer></script>
 <script>
-window.addEventListener('DOMContentLoaded', () => {
+// Firebase + auth.js 在 head 已同步載入，這裡直接初始化 UI
+(function() {
   const loginGate = document.getElementById('loginGate');
   const memberArea = document.getElementById('memberArea');
 
@@ -166,10 +166,8 @@ window.addEventListener('DOMContentLoaded', () => {
       memberArea.style.display = 'none';
       return;
     }
-
     loginGate.style.display = 'none';
     memberArea.style.display = 'block';
-
     document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
     document.getElementById('userEmail').textContent = user.email;
     document.getElementById('inputEmail').value = user.email || '';
@@ -177,7 +175,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('memberForm').onsubmit = async (e) => {
     e.preventDefault();
-
     const form = e.target;
     const data = {
       name:     form.name.value.trim(),
@@ -190,30 +187,22 @@ window.addEventListener('DOMContentLoaded', () => {
       zipcode:  form.zipcode.value.trim(),
       note:     form.note.value.trim()
     };
-
-    if (!data.name) {
-      alert('請填寫姓名');
-      return;
-    }
-
+    if (!data.name) { alert('請填寫姓名'); return; }
+    const banner = document.getElementById('savedBanner');
+    const errBanner = document.getElementById('errorBanner');
+    errBanner.style.display = 'none';
     try {
-      const banner = document.getElementById('savedBanner');
-      const errBanner = document.getElementById('errorBanner');
-      errBanner.style.display = 'none';
-
       await firebaseAuth.saveMemberData(data);
-
       banner.style.display = 'block';
       banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       setTimeout(() => { banner.style.display = 'none'; }, 5000);
     } catch(err) {
-      const errBanner = document.getElementById('errorBanner');
       errBanner.style.display = 'block';
       errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       console.error(err);
     }
   };
-});
+})();
 </script>
 </body>
 </html>

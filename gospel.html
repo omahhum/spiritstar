@@ -19,19 +19,8 @@
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo">聖輪宗</a>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="about.html">認識聖輪宗</a></li>
-      <li><a href="gospel.html" class="active">聖輪福音</a></li>
-      <li><a href="methods.html">修行法門</a></li>
-      <li><a href="refuge.html">皈依專區</a></li>
-      <li><a href="contact.html">聯絡我們</a></li>
-    </ul>
-    <button class="nav-mobile-btn" id="mobileBtn">☰</button>
-  </div>
-</nav>
+<!-- Navigation -->
+<nav id="top-nav"></nav>
 
 <header class="page-header">
   <h1>聖輪福音</h1>
@@ -121,34 +110,15 @@
   <p class="footer-copy">© 2026 聖輪宗 HolyChakra Spiritstar.</p>
 </footer>
 
+<script src="js/auth.js"></script>
+<script src="js/top-menu.js" defer></script>
 <script>
-document.getElementById('mobileBtn').onclick = () => document.getElementById('navLinks').classList.toggle('open');
-const observer = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: .1 });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+document.addEventListener('DOMContentLoaded', () => {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: .1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+});
 </script>
-  <script src="js/auth.js"></script>
-  <script>
-  // ── Auth Nav 狀態同步 ──
-  function renderAuthUI(user) {
-    const nav = document.getElementById("navLinks");
-    const existing = document.getElementById("authNavItem");
-    if (existing) existing.remove();
-    const li = document.createElement("li");
-    li.id = "authNavItem";
-    if (user) {
-      const displayName = user.displayName || user.email.split("@")[0];
-      li.innerHTML = `<span style="color:var(--gold);font-size:.85rem;">${displayName}</span>
-        <span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>
-        <a href="member.html" style="font-size:.85rem;">會員專區</a>
-        <span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>
-        <a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
-    } else {
-      li.innerHTML = `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
-    }
-    nav.appendChild(li);
-  }
-
-  firebaseAuth.onAuthStateChanged(renderAuthUI);
-  </script>
 </body>
 </html>

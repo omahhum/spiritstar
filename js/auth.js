@@ -19,6 +19,17 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3Plb0dcAJ-FFUV9bhltfvd-hluckM1vD_muRzWGLr4W4St0Rjpzk-K2IjtUNL2K5wrw/exec';
 
 /**
+ * 初始化後處理 redirect 結果（頁面載入時呼叫）
+ * 讓 Firebase 解析 OAuth redirect 回調並恢復 session
+ */
+auth.getRedirectResult().catch(err => {
+  // 忽略 "no redirect result" 之類的非錯誤
+  if (err.code !== 'auth/no-auth-event') {
+    console.warn('Redirect result error:', err.code, err.message);
+  }
+});
+
+/**
  * 彈出 Gmail 登入視窗
  */
 function signInWithGoogle() {
@@ -57,12 +68,9 @@ async function saveMemberData(data) {
   const user = auth.currentUser;
   if (!user) throw new Error("未登入");
 
-  // 取得 Firebase ID Token 作為身份驗證
-  const idToken = await user.getIdToken();
-
   const payload = {
     ...data,
-    email: user.email  // 自動帶入登入 Gmail
+    email: user.email
   };
 
   const response = await fetch(APPS_SCRIPT_URL, {

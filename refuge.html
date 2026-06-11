@@ -12,6 +12,9 @@
     .benefit-item { display:flex;align-items:flex-start;gap:1rem;padding:1rem 0;border-bottom:1px solid rgba(212,175,55,.08); }
     .benefit-icon { color:var(--gold);font-size:1.2rem;flex-shrink:0;padding-top:.1rem; }
   </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
 <body>
 
@@ -104,36 +107,29 @@
 <!-- 申請表單 -->
 <section class="section">
   <h2 class="section-title fade-in">線上申請皈依</h2>
-  <p class="section-sub fade-in">請填寫以下資料，我們將儘快與您聯繫</p>
-  <div style="max-width:560px;margin:0 auto;">
-    <form id="refugeForm" class="fade-in">
-      <div style="margin-bottom:1.5rem;">
-        <label style="display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem;">姓名 *</label>
-        <input type="text" name="name" required placeholder="您的姓名"
-          style="width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.75rem 1rem;outline:none;transition:border .3s;font-family:'Noto Sans TC',sans-serif;">
+    <!-- 未登入提示 -->
+    <div id="refugeLoginGate" style="max-width:560px;margin:0 auto;display:none;" class="fade-in">
+      <div class="card" style="text-align:center;">
+        <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:.8rem;">申請皈依</h3>
+        <p style="color:var(--text-muted);line-height:1.9;margin-bottom:1.5rem;">
+          請先登入 Gmail 帳號，確認您的身分後再填寫皈依資料。
+        </p>
+        <button onclick="firebaseAuth.signInWithGoogle()" class="btn-gold" style="cursor:pointer;">用 Gmail 登入</button>
+        <p style="color:rgba(168,164,216,.5);font-size:.82rem;margin-top:1rem;">
+          登入後將前往會員專區填寫完整資料
+        </p>
       </div>
-      <div style="margin-bottom:1.5rem;">
-        <label style="display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem;"> Email *</label>
-        <input type="email" name="email" required placeholder="gmail@example.com"
-          style="width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.75rem 1rem;outline:none;transition:border .3s;font-family:'Noto Sans TC',sans-serif;">
+    </div>
+
+    <!-- 已登入：直接前往會員專區 -->
+    <div id="refugeLoggedIn" style="max-width:560px;margin:0 auto;display:none;" class="fade-in">
+      <div class="card" style="text-align:center;">
+        <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:.8rem;">您已登入</h3>
+        <p id="refugeUserInfo" style="color:var(--text-muted);margin-bottom:1.5rem;"></p>
+        <a href="member.html" class="btn-gold">前往會員專區填寫皈依資料 →</a>
       </div>
-      <div style="margin-bottom:1.5rem;">
-        <label style="display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem;">電話</label>
-        <input type="tel" name="phone" placeholder="（選填）"
-          style="width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.75rem 1rem;outline:none;transition:border .3s;font-family:'Noto Sans TC',sans-serif;">
-      </div>
-      <div style="margin-bottom:1.5rem;">
-        <label style="display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem;">祈願內容</label>
-        <textarea name="wish" rows="4" placeholder="您對修行的期待、想請求師父開示的方向，或任何想說的話..."
-          style="width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.75rem 1rem;outline:none;transition:border .3s;resize:vertical;font-family:'Noto Sans TC',sans-serif;"></textarea>
-      </div>
-      <button type="submit" class="btn-gold" style="width:100%;padding:1rem;cursor:pointer;background:transparent;">
-        送出申請
-      </button>
-      <p id="formMsg" style="text-align:center;margin-top:1rem;font-size:.88rem;display:none;"></p>
-    </form>
-  </div>
-</section>
+    </div>
+  </section>
 
 <footer class="footer">
   <div class="footer-logo">聖輪宗甘露王院</div>
@@ -147,31 +143,46 @@
   <p class="footer-copy">© 2026 聖輪宗 HolyChakra Spiritstar.</p>
 </footer>
 
+<script src="js/auth.js"></script>
 <script>
 document.getElementById('mobileBtn').onclick = () => document.getElementById('navLinks').classList.toggle('open');
 const observer = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: .1 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-// Form submit
-document.getElementById('refugeForm').onsubmit = async (e) => {
-  e.preventDefault();
-  const form = e.target;
-  const data = Object.fromEntries(new FormData(form));
-  const msg = document.getElementById('formMsg');
-  msg.style.display = 'block';
-  msg.style.color = 'var(--text-muted)';
-  msg.textContent = '傳送中…';
-  try {
-    // TODO: 串接 Firebase Auth + Apps Script
-    console.log('皈依申請資料：', data);
-    msg.style.color = 'var(--gold-soft)';
-    msg.textContent = '已成功送出！我們將儘快與您聯繫。';
-    form.reset();
-  } catch(err) {
-    msg.style.color = '#e8a0a0';
-    msg.textContent = '傳送失敗，請稍後再試或聯絡我們。';
+// ── Auth：控制登入/已登入顯示 ──
+firebaseAuth.onAuthStateChanged(user => {
+  const loginGate = document.getElementById('refugeLoginGate');
+  const loggedIn  = document.getElementById('refugeLoggedIn');
+  if (!user) {
+    loginGate.style.display = 'block';
+    loggedIn.style.display  = 'none';
+  } else {
+    loginGate.style.display = 'none';
+    loggedIn.style.display  = 'block';
+    document.getElementById('refugeUserInfo').textContent = user.email;
   }
-};
+});
+
+// ── Auth Nav 狀態同步 ──
+function renderAuthUI(user) {
+  const nav = document.getElementById("navLinks");
+  const existing = document.getElementById("authNavItem");
+  if (existing) existing.remove();
+  const li = document.createElement("li");
+  li.id = "authNavItem";
+  if (user) {
+    const displayName = user.displayName || user.email.split("@")[0];
+    li.innerHTML = `<span style="color:var(--gold);font-size:.85rem;">${displayName}</span>
+      <span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>
+      <a href="member.html" style="font-size:.85rem;">會員專區</a>
+      <span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>
+      <a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
+  } else {
+    li.innerHTML = `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
+  }
+  nav.appendChild(li);
+}
+firebaseAuth.onAuthStateChanged(renderAuthUI);
 </script>
 </body>
 </html>

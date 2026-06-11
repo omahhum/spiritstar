@@ -24,6 +24,9 @@
       margin: 2rem 0;
     }
   </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
 <body>
 
@@ -155,5 +158,29 @@ document.getElementById('mobileBtn').onclick = () => document.getElementById('na
 const observer = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: .1 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
+  <script src="js/auth.js"></script>
+  <script>
+  // ── Auth Nav 狀態同步 ──
+  function renderAuthUI(user) {
+    const nav = document.getElementById("navLinks");
+    const existing = document.getElementById("authNavItem");
+    if (existing) existing.remove();
+    const li = document.createElement("li");
+    li.id = "authNavItem";
+    if (user) {
+      const displayName = user.displayName || user.email.split("@")[0];
+      li.innerHTML = `<span style="color:var(--gold);font-size:.85rem;">\${displayName}</span>
+        <span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>
+        <a href="member.html" style="font-size:.85rem;">會員專區</a>
+        <span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>
+        <a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
+    } else {
+      li.innerHTML = `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
+    }
+    nav.appendChild(li);
+  }
+
+  firebaseAuth.onAuthStateChanged(renderAuthUI);
+  </script>
 </body>
 </html>

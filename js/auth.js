@@ -5,7 +5,7 @@
 
 // Firebase SDK (v9 compat 模式，CDN 直接載入)
 firebase.initializeApp({
-  apiKey: "AIzaSy...A17I",
+  apiKey: "AIzaSyDpmCMLtHDuvTWFCKSNBDLFMmdGdQfA17I",
   authDomain: "studio-4305054348-a6a5f.firebaseapp.com",
   projectId: "studio-4305054348-a6a5f",
   storageBucket: "studio-4305054348-a6a5f.firebasestorage.app",

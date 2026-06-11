@@ -5,7 +5,7 @@
 
 // Firebase SDK (v9 compat 模式，CDN 直接載入)
 firebase.initializeApp({
-  apiKey: "AIzaSyDpmCMLtHDuvTWFCKSNBDLFMmdGdQfA17I",
+  apiKey: "AIzaSy...A17I",
   authDomain: "studio-4305054348-a6a5f.firebaseapp.com",
   projectId: "studio-4305054348-a6a5f",
   storageBucket: "studio-4305054348-a6a5f.firebasestorage.app",
@@ -16,18 +16,18 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3Plb0dcAJ-FFUV9bhltfvd-hluckM1vD_muRzWGLr4W4St0Rjpzk-K2IjtUNL2K5wrw/exec';
+
 /**
  * 彈出 Gmail 登入視窗
  */
 function signInWithGoogle() {
-  // 請求焦點，防止popup被阻擋
   const popup = auth.signInWithPopup(googleProvider);
   popup.catch(err => {
     console.error("登入失敗：", err.code, err.message);
-    // 常見錯誤說明
     let hint = "請稍後再試";
     if (err.code === "auth/unauthorized-domain") {
-      hint = "網域未經授權，請聯絡網站管理員（需將網域加入Firebase授權清單）";
+      hint = "網域未經授權，請聯絡網站管理員";
     } else if (err.code === "auth/popup-blocked") {
       hint = "彈窗被封鎖，請允許彈窗後再試";
     } else if (err.code === "auth/cancelled") {
@@ -42,14 +42,12 @@ function signInWithGoogle() {
  */
 function signOut() {
   auth.signOut().then(() => {
-    // 移除 localStorage 會員資料
     localStorage.removeItem("holyChakra_member");
   });
 }
 
 /**
  * 取得目前登入會員資料（同步）
- * 回傳 null 表示未登入
  */
 function getCurrentUser() {
   return auth.currentUser;
@@ -64,26 +62,36 @@ function onAuthStateChanged(callback) {
 }
 
 /**
- * 儲存會員補充資料到 localStorage
- * （Phase 2 再改為 Apps Script API）
+ * 儲存會員資料到 Google Sheet
+ * data = { name, gender, birthday, address, phone, facebook, referrer, zipcode, note }
  */
-function saveMemberData(data) {
+async function saveMemberData(data) {
   const user = auth.currentUser;
-  if (!user) return Promise.reject("未登入");
-  const record = {
-    uid: user.uid,
-    name: data.name || user.displayName || "",
-    email: data.email || user.email || "",
-    phone: data.phone || "",
-    wish: data.wish || "",
-    updatedAt: new Date().toISOString()
+  if (!user) throw new Error("未登入");
+
+  // 取得 Firebase ID Token 作為身份驗證
+  const idToken = await user.getIdToken();
+
+  const payload = {
+    ...data,
+    email: user.email  // 自動帶入登入 Gmail
   };
-  localStorage.setItem("holyChakra_member", JSON.stringify(record));
-  return Promise.resolve(record);
+
+  const response = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error('儲存失敗，請稍後再試');
+  }
+
+  return await response.json();
 }
 
 /**
- * 讀取本地會員資料
+ * 讀取本地會員資料（舊相容用，仍然讀 localStorage）
  */
 function getMemberData() {
   const raw = localStorage.getItem("holyChakra_member");

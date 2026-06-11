@@ -153,65 +153,67 @@
   <p class="footer-copy">© 2026 聖輪宗 HolyChakra Spiritstar.</p>
 </footer>
 
-<script src="js/auth.js"></script>
+<script src="js/auth.js" defer></script>
 <script src="js/top-menu.js" defer></script>
 <script>
-const loginGate = document.getElementById('loginGate');
-const memberArea = document.getElementById('memberArea');
+window.addEventListener('DOMContentLoaded', () => {
+  const loginGate = document.getElementById('loginGate');
+  const memberArea = document.getElementById('memberArea');
 
-firebaseAuth.onAuthStateChanged(user => {
-  if (!user) {
-    loginGate.style.display = 'flex';
-    memberArea.style.display = 'none';
-    return;
-  }
+  firebaseAuth.onAuthStateChanged(user => {
+    if (!user) {
+      loginGate.style.display = 'flex';
+      memberArea.style.display = 'none';
+      return;
+    }
 
-  loginGate.style.display = 'none';
-  memberArea.style.display = 'block';
+    loginGate.style.display = 'none';
+    memberArea.style.display = 'block';
 
-  document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
-  document.getElementById('userEmail').textContent = user.email;
-  document.getElementById('inputEmail').value = user.email || '';
-});
+    document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
+    document.getElementById('userEmail').textContent = user.email;
+    document.getElementById('inputEmail').value = user.email || '';
+  });
 
-document.getElementById('memberForm').onsubmit = async (e) => {
-  e.preventDefault();
+  document.getElementById('memberForm').onsubmit = async (e) => {
+    e.preventDefault();
 
-  const form = e.target;
-  const data = {
-    name:     form.name.value.trim(),
-    gender:   form.gender.value.trim(),
-    birthday: form.birthday.value.trim(),
-    address:  form.address.value.trim(),
-    phone:    form.phone.value.trim(),
-    facebook: form.facebook.value.trim(),
-    referrer: form.referrer.value.trim(),
-    zipcode:  form.zipcode.value.trim(),
-    note:     form.note.value.trim()
+    const form = e.target;
+    const data = {
+      name:     form.name.value.trim(),
+      gender:   form.gender.value.trim(),
+      birthday: form.birthday.value.trim(),
+      address:  form.address.value.trim(),
+      phone:    form.phone.value.trim(),
+      facebook: form.facebook.value.trim(),
+      referrer: form.referrer.value.trim(),
+      zipcode:  form.zipcode.value.trim(),
+      note:     form.note.value.trim()
+    };
+
+    if (!data.name) {
+      alert('請填寫姓名');
+      return;
+    }
+
+    try {
+      const banner = document.getElementById('savedBanner');
+      const errBanner = document.getElementById('errorBanner');
+      errBanner.style.display = 'none';
+
+      await firebaseAuth.saveMemberData(data);
+
+      banner.style.display = 'block';
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      setTimeout(() => { banner.style.display = 'none'; }, 5000);
+    } catch(err) {
+      const errBanner = document.getElementById('errorBanner');
+      errBanner.style.display = 'block';
+      errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      console.error(err);
+    }
   };
-
-  if (!data.name) {
-    alert('請填寫姓名');
-    return;
-  }
-
-  try {
-    const banner = document.getElementById('savedBanner');
-    const errBanner = document.getElementById('errorBanner');
-    errBanner.style.display = 'none';
-
-    await firebaseAuth.saveMemberData(data);
-
-    banner.style.display = 'block';
-    banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    setTimeout(() => { banner.style.display = 'none'; }, 5000);
-  } catch(err) {
-    const errBanner = document.getElementById('errorBanner');
-    errBanner.style.display = 'block';
-    errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    console.error(err);
-  }
-};
+});
 </script>
 </body>
 </html>

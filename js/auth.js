@@ -20,9 +20,20 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
  * 彈出 Gmail 登入視窗
  */
 function signInWithGoogle() {
-  auth.signInWithPopup(googleProvider).catch(err => {
-    console.error("登入失敗：", err);
-    alert("登入失敗，請稍後再試。");
+  // 請求焦點，防止popup被阻擋
+  const popup = auth.signInWithPopup(googleProvider);
+  popup.catch(err => {
+    console.error("登入失敗：", err.code, err.message);
+    // 常見錯誤說明
+    let hint = "請稍後再試";
+    if (err.code === "auth/unauthorized-domain") {
+      hint = "網域未經授權，請聯絡網站管理員（需將網域加入Firebase授權清單）";
+    } else if (err.code === "auth/popup-blocked") {
+      hint = "彈窗被封鎖，請允許彈窗後再試";
+    } else if (err.code === "auth/cancelled") {
+      hint = "已取消登入";
+    }
+    alert("登入失敗：" + hint);
   });
 }
 

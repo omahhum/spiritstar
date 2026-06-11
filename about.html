@@ -150,6 +150,31 @@ document.addEventListener('DOMContentLoaded', () => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: .1 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Auth nav item（依登入狀態追加至 nav）
+  if (window.firebaseAuth) {
+    firebaseAuth.onAuthStateChanged(user => {
+      const nav = document.getElementById('navLinks');
+      if (!nav) return;
+      const old = nav.querySelector('.auth-nav-item');
+      if (old) old.remove();
+      const li = document.createElement('li');
+      li.className = 'auth-nav-item';
+      if (user) {
+        const name = user.displayName || (user.email ? user.email.split('@')[0] : '會員');
+        li.innerHTML =
+          `<span style="color:var(--gold);font-size:.85rem;">${name}</span>` +
+          `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
+          `<a href="member.html" style="font-size:.85rem;">會員專區</a>` +
+          `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
+          `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
+      } else {
+        li.innerHTML =
+          `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
+      }
+      nav.appendChild(li);
+    });
+  }
 });
 </script>
 </body>

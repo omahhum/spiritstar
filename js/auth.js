@@ -22,19 +22,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3Plb0dcAJ-FFU
  * 彈出 Gmail 登入視窗
  */
 function signInWithGoogle() {
-  const popup = auth.signInWithPopup(googleProvider);
-  popup.catch(err => {
-    console.error("登入失敗：", err.code, err.message);
-    let hint = "請稍後再試";
-    if (err.code === "auth/unauthorized-domain") {
-      hint = "網域未經授權，請聯絡網站管理員";
-    } else if (err.code === "auth/popup-blocked") {
-      hint = "彈窗被封鎖，請允許彈窗後再試";
-    } else if (err.code === "auth/cancelled") {
-      hint = "已取消登入";
-    }
-    alert("登入失敗：" + hint);
-  });
+  auth.signInWithRedirect(googleProvider);
 }
 
 /**

@@ -75,11 +75,13 @@ async function saveMemberData(data) {
 
   const response = await fetch(APPS_SCRIPT_URL, {
     method: 'POST',
-    body: payload
+    body: payload,
+    redirect: 'follow'
   });
 
   const text = await response.text();
-  if (!response.ok) {
+  // Apps Script 成功時 body 是 {"status":"ok"}，即使 response.ok 非 200 也要允許
+  if (!text.includes('ok')) {
     throw new Error('儲存失敗，請稍後再試');
   }
 }

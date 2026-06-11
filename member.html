@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>會員專區 — 聖輪宗</title>
+  <meta name="description" content="皈依信眾專區，填寫個人資料、祈願內容。">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .page-header { padding-top:100px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
+    .form-input { width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.75rem 1rem;outline:none;transition:border .3s;font-family:'Noto Sans TC',sans-serif; }
+    .form-input:focus { border-color:var(--gold); }
+    .form-input::placeholder { color:rgba(168,164,216,.45); }
+    .profile-badge { display:inline-flex;align-items:center;gap:.5rem;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);padding:.4rem 1rem;border-radius:2px;font-size:.85rem;color:var(--gold-soft); }
+    .saved-banner { background:rgba(39,100,60,.4);border:1px solid #4caf7d;color:#9de8bb;padding:1rem 1.5rem;border-radius:4px;font-size:.92rem;text-align:center;display:none; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">聖輪宗</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="about.html">認識聖輪宗</a></li>
+      <li><a href="gospel.html">聖輪福音</a></li>
+      <li><a href="methods.html">修行法門</a></li>
+      <li><a href="refuge.html">皈依專區</a></li>
+      <li><a href="contact.html">聯絡我們</a></li>
+    </ul>
+    <button class="nav-mobile-btn" id="mobileBtn">☰</button>
+  </div>
+</nav>
+
+<!-- Login gate -->
+<div id="loginGate" style="display:none;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;">
+  <h2 style="font-family:'Noto Serif TC',serif;color:var(--gold);font-size:2rem;margin-bottom:1rem;">請先登入</h2>
+  <p style="color:var(--text-muted);margin-bottom:2rem;">登入後即可填寫皈依資料</p>
+  <button onclick="firebaseAuth.signInWithGoogle()" class="btn-gold">用 Gmail 登入</button>
+</div>
+
+<!-- Member area -->
+<div id="memberArea" style="display:none;">
+  <header class="page-header">
+    <h1>會員專區</h1>
+    <p>皈依信眾專區</p>
+  </header>
+
+  <section class="section">
+    <div style="max-width:600px;margin:0 auto;">
+      <!-- 登入者資訊 -->
+      <div class="card fade-in" style="margin-bottom:2rem;background:rgba(212,175,55,.06);">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <div class="profile-badge">
+              <span>✓ 已登入</span>
+              <span id="userName"></span>
+            </div>
+            <p id="userEmail" style="color:var(--text-muted);font-size:.85rem;margin-top:.5rem;"></p>
+          </div>
+          <button onclick="firebaseAuth.signOut();location.reload();" class="btn-outline" style="padding:.5rem 1.2rem;font-size:.82rem;">登出</button>
+        </div>
+      </div>
+
+      <!-- 存檔提示 -->
+      <div id="savedBanner" class="saved-banner fade-in">
+        ✓ 資料已儲存，感謝您的填寫！
+      </div>
+
+      <!-- 填寫表單 -->
+      <div class="card fade-in" style="margin-top:1.5rem;">
+        <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:.3rem;">皈依資料</h3>
+        <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">請填寫您的個人資料與祈願內容</p>
+
+        <form id="memberForm">
+          <div style="margin-bottom:1.5rem;">
+            <label style="display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem;">姓名 *</label>
+            <input type="text" name="name" id="inputName" required class="form-input" placeholder="您的姓名">
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label style="display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem;"> Email（已驗證）</label>
+            <input type="email" id="inputEmail" disabled class="form-input" style="opacity:.6;cursor:not-allowed;" placeholder="gmail@example.com">
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label style="display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem;">電話</label>
+            <input type="tel" name="phone" id="inputPhone" class="form-input" placeholder="（選填）">
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label style="display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem;">祈願內容</label>
+            <textarea name="wish" id="inputWish" rows="5" class="form-input" style="resize:vertical;" placeholder="您對修行的期待、想請求師父開示的方向，或任何想說的話..."></textarea>
+          </div>
+          <button type="submit" class="btn-gold" style="width:100%;padding:1rem;cursor:pointer;background:transparent;">
+            儲存資料
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="footer">
+  <div class="footer-logo">聖輪宗甘露王院</div>
+  <div class="footer-links">
+    <a href="about.html">認識聖輪宗</a>
+    <a href="gospel.html">聖輪福音</a>
+    <a href="methods.html">修行法門</a>
+    <a href="refuge.html">皈依專區</a>
+    <a href="contact.html">聯絡我們</a>
+  </div>
+  <p class="footer-copy">© 2026 聖輪宗 HolyChakra Spiritstar.</p>
+</footer>
+
+<script src="js/auth.js"></script>
+<script>
+document.getElementById('mobileBtn').onclick = () => document.getElementById('navLinks').classList.toggle('open');
+const observer = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: .1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+const loginGate = document.getElementById('loginGate');
+const memberArea = document.getElementById('memberArea');
+
+firebaseAuth.onAuthStateChanged(user => {
+  if (!user) {
+    loginGate.style.display = 'flex';
+    memberArea.style.display = 'none';
+    return;
+  }
+
+  loginGate.style.display = 'none';
+  memberArea.style.display = 'block';
+
+  // 填入已知的會員資料
+  document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
+  document.getElementById('userEmail').textContent = user.email;
+  document.getElementById('inputEmail').value = user.email || '';
+
+  // 載入已儲存的本地資料
+  const saved = firebaseAuth.getMemberData();
+  if (saved) {
+    document.getElementById('inputName').value = saved.name || user.displayName || '';
+    document.getElementById('inputPhone').value = saved.phone || '';
+    document.getElementById('inputWish').value = saved.wish || '';
+  } else {
+    document.getElementById('inputName').value = user.displayName || '';
+  }
+});
+
+// 表單送出
+document.getElementById('memberForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = {
+    name: form.name.value.trim(),
+    phone: form.phone.value.trim(),
+    wish: form.wish.value.trim()
+  };
+
+  try {
+    await firebaseAuth.saveMemberData(data);
+    const banner = document.getElementById('savedBanner');
+    banner.style.display = 'block';
+    banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => { banner.style.display = 'none'; }, 5000);
+  } catch(err) {
+    alert('儲存失敗：' + err);
+  }
+};
+</script>
+</body>
+</html>

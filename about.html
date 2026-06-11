@@ -169,7 +169,7 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     li.id = "authNavItem";
     if (user) {
       const displayName = user.displayName || user.email.split("@")[0];
-      li.innerHTML = `<span style="color:var(--gold);font-size:.85rem;">\${displayName}</span>
+      li.innerHTML = `<span style="color:var(--gold);font-size:.85rem;">${displayName}</span>
         <span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>
         <a href="member.html" style="font-size:.85rem;">會員專區</a>
         <span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>

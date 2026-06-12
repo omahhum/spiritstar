@@ -33,7 +33,10 @@ auth.getRedirectResult().catch(err => {
  * 彈出 Gmail 登入視窗
  */
 function signInWithGoogle() {
-  auth.signInWithRedirect(googleProvider);
+  auth.signInWithPopup(googleProvider).catch(err => {
+    console.error('登入失敗:', err);
+    alert('登入失敗：' + err.message + '\n(若是 unauthorized-domain，請至 Firebase 後台加入此網域)');
+  });
 }
 
 /**

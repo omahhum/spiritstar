@@ -47,7 +47,7 @@
     <div style="max-width:600px;margin:0 auto;">
 
       <!-- 登入者資訊 -->
-      <div class="card fade-in" style="margin-bottom:1.5rem;background:rgba(212,175,55,.06);">
+      <div class="card" style="margin-bottom:1.5rem;background:rgba(212,175,55,.06);">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
           <div>
             <div class="profile-badge">
@@ -65,7 +65,7 @@
       <div id="errorBanner" class="error-banner fade-in">⚠ 儲存失敗，請稍後再試</div>
 
       <!-- 皈依資料表單 -->
-      <div class="card fade-in" style="margin-top:1.5rem;">
+      <div class="card" style="margin-top:1.5rem;">
         <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:.3rem;">皈依資料</h3>
         <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">請填寫以下資料即可完成皈依報名</p>
 
@@ -155,63 +155,78 @@
 </footer>
 
 <script>
+// ── 更新 nav 的 auth 項目 ──────────────────────────────────────────
+function updateAuthNav(user) {
+  const nav = document.getElementById('navLinks');
+  if (!nav) return;
+  const old = nav.querySelector('.auth-nav-item');
+  if (old) old.remove();
+  const li = document.createElement('li');
+  li.className = 'auth-nav-item';
+  if (user) {
+    const name = user.displayName || (user.email ? user.email.split('@')[0] : '會員');
+    li.innerHTML =
+      `<span style="color:var(--gold);font-size:.85rem;">${name}</span>` +
+      `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
+      `<a href="member.html" style="font-size:.85rem;">會員專區</a>` +
+      `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
+      `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
+  } else {
+    li.innerHTML =
+      `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
+  }
+  nav.appendChild(li);
+}
+
+// ── 主 auth 狀態監聽（不依賴 DOMContentLoaded，Firebase 會在 session restore 後觸發）──
+firebaseAuth.onAuthStateChanged(user => {
+  // 若 nav 已渲染就直接更新；否則等 DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => updateAuthNav(user), { once: true });
+  } else {
+    updateAuthNav(user);
+  }
+
+  const loginGate = document.getElementById('loginGate');
+  const memberArea = document.getElementById('memberArea');
+
+  if (!user) {
+    if (loginGate) { loginGate.style.display = 'flex'; }
+    if (memberArea) { memberArea.style.display = 'none'; }
+    return;
+  }
+
+  if (loginGate) { loginGate.style.display = 'none'; }
+  if (memberArea) { memberArea.style.display = 'block'; }
+
+  const elName  = document.getElementById('userName');
+  const elEmail = document.getElementById('userEmail');
+  const elInput = document.getElementById('inputEmail');
+  if (elName)  elName.textContent  = user.displayName || user.email.split('@')[0];
+  if (elEmail) elEmail.textContent = user.email;
+  if (elInput) elInput.value       = user.email || '';
+});
+
+// ── 表單送出 ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // 處理 OAuth redirect 回調（防止 Firebase 搶在 DOM 完成前觸發 listener）
-  firebaseAuth.getRedirectResult().catch(() => {});
-
-  firebaseAuth.onAuthStateChanged(user => {
-    // Auth nav item
-    const nav = document.getElementById('navLinks');
-    if (nav) {
-      const old = nav.querySelector('.auth-nav-item');
-      if (old) old.remove();
-      const li = document.createElement('li');
-      li.className = 'auth-nav-item';
-      if (user) {
-        const name = user.displayName || (user.email ? user.email.split('@')[0] : '會員');
-        li.innerHTML =
-          `<span style="color:var(--gold);font-size:.85rem;">${name}</span>` +
-          `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-          `<a href="member.html" style="font-size:.85rem;">會員專區</a>` +
-          `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-          `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
-      } else {
-        li.innerHTML =
-          `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
-      }
-      nav.appendChild(li);
-    }
-
-    const loginGate = document.getElementById('loginGate');
-    const memberArea = document.getElementById('memberArea');
-    if (!user) {
-      if (loginGate) loginGate.style.display = 'flex';
-      if (memberArea) memberArea.style.display = 'none';
-      return;
-    }
-    if (loginGate) loginGate.style.display = 'none';
-    if (memberArea) memberArea.style.display = 'block';
-    document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
-    document.getElementById('userEmail').textContent = user.email;
-    document.getElementById('inputEmail').value = user.email || '';
-  });
-
-  document.getElementById('memberForm').onsubmit = async (e) => {
+  const form = document.getElementById('memberForm');
+  if (!form) return;
+  form.onsubmit = async (e) => {
     e.preventDefault();
-    const form = e.target;
+    const fd = e.target;
     const data = {
-      name:     form.name.value.trim(),
-      gender:   form.gender.value.trim(),
-      birthday: form.birthday.value.trim(),
-      address:  form.address.value.trim(),
-      phone:    form.phone.value.trim(),
-      facebook: form.facebook.value.trim(),
-      referrer: form.referrer.value.trim(),
-      zipcode:  form.zipcode.value.trim(),
-      note:     form.note.value.trim()
+      name:     fd.name.value.trim(),
+      gender:   fd.gender.value.trim(),
+      birthday: fd.birthday.value.trim(),
+      address:  fd.address.value.trim(),
+      phone:    fd.phone.value.trim(),
+      facebook: fd.facebook.value.trim(),
+      referrer: fd.referrer.value.trim(),
+      zipcode:  fd.zipcode.value.trim(),
+      note:     fd.note.value.trim()
     };
     if (!data.name) { alert('請填寫姓名'); return; }
-    const banner = document.getElementById('savedBanner');
+    const banner    = document.getElementById('savedBanner');
     const errBanner = document.getElementById('errorBanner');
     errBanner.style.display = 'none';
     try {

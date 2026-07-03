@@ -105,6 +105,31 @@ function hasMemberData() {
   return getMemberData() !== null;
 }
 
+/**
+ * 查詢這個 email 是否在 Google Sheets 的白名單（皈依學員）中
+ * @param {string} email
+ * @returns {Promise<{found: boolean, name?: string}>}
+ */
+async function checkRefugeeStatus(email) {
+  try {
+    const payload = new URLSearchParams({ action: 'checkRefugee', email });
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: payload,
+      redirect: 'follow'
+    });
+    const text = await response.text();
+    try {
+      const data = JSON.parse(text);
+      return { found: data.found === true, name: data.name || '' };
+    } catch {
+      return { found: false };
+    }
+  } catch {
+    return { found: false };
+  }
+}
+
 // 對外暴露
 window.firebaseAuth = {
   signInWithGoogle,
@@ -113,5 +138,6 @@ window.firebaseAuth = {
   onAuthStateChanged,
   saveMemberData,
   getMemberData,
-  hasMemberData
+  hasMemberData,
+  checkRefugeeStatus
 };

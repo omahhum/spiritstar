@@ -61,10 +61,25 @@
       </div>
 
       <!-- 存檔提示 / 錯誤提示 -->
-      <div id="savedBanner" class="saved-banner fade-in">✓ 資料已儲存，感謝您的填寫！</div>
-      <div id="errorBanner" class="error-banner fade-in">⚠ 儲存失敗，請稍後再試</div>
+            <div id="savedBanner" class="saved-banner fade-in">✓ 資料已儲存，感謝您的填寫！</div>
+            <div id="errorBanner" class="error-banner fade-in">⚠ 儲存失敗，請稍後再試</div>
 
-      <!-- 皈依資料表單 -->
+            <!-- 已皈依提示（初次隱藏，查詢後才顯示） -->
+            <div id="refugeeBanner" class="card fade-in" style="display:none;margin-top:1.5rem;background:rgba(212,175,55,.06);">
+              <div style="text-align:center;padding:2rem;">
+                <div style="font-size:2.5rem;margin-bottom:.5rem;">🙏</div>
+                <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:.5rem;">已完成皈依資料</h3>
+                <p id="refugeeGreeting" style="color:var(--gold-soft);font-size:1rem;"></p>
+                <p style="color:var(--text-muted);font-size:.85rem;margin-top:1rem;">感恩您的發心，相關法務訊息將於日後通知。</p>
+              </div>
+            </div>
+
+            <!-- 查詢中提示 -->
+            <div id="checkingStatus" style="display:none;text-align:center;padding:2rem;color:var(--text-muted);font-size:.9rem;">
+              查詢皈依資料中⋯
+            </div>
+
+            <!-- 皈依資料表單 -->
       <div class="card" style="margin-top:1.5rem;">
         <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:.3rem;">皈依資料</h3>
         <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">請填寫以下資料即可完成皈依報名</p>
@@ -194,9 +209,37 @@ firebaseAuth.onAuthStateChanged(user => {
   const elEmail = document.getElementById('userEmail');
   const elInput = document.getElementById('inputEmail');
   if (elName)  elName.textContent  = user.displayName || user.email.split('@')[0];
-  if (elEmail) elEmail.textContent = user.email;
-  if (elInput) elInput.value       = user.email || '';
-});
+    if (elEmail) elEmail.textContent = user.email;
+    if (elInput) elInput.value       = user.email || '';
+
+    // ── 查詢是否已皈依 ──────────────────────────────────────────
+    const memberForm  = document.getElementById('memberForm');
+    const refugeeBanner = document.getElementById('refugeeBanner');
+    const checkingStatus = document.getElementById('checkingStatus');
+    if (memberForm) memberForm.style.display = 'none';
+    if (refugeeBanner) refugeeBanner.style.display = 'none';
+    if (checkingStatus) checkingStatus.style.display = 'block';
+
+    firebaseAuth.checkRefugeeStatus(user.email).then(result => {
+      if (checkingStatus) checkingStatus.style.display = 'none';
+      if (result.found) {
+        // 已皈依 → 隱藏表單，顯示感恩提示
+        if (memberForm) memberForm.style.display = 'none';
+        if (refugeeBanner) {
+          const greet = document.getElementById('refugeeGreeting');
+          if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
+          refugeeBanner.style.display = 'block';
+          setTimeout(() => refugeeBanner.classList.add('visible'), 50);
+        }
+      } else {
+        // 未皈依 → 顯示表單
+        if (memberForm) memberForm.style.display = 'block';
+      }
+    }).catch(() => {
+      if (checkingStatus) checkingStatus.style.display = 'none';
+      if (memberForm) memberForm.style.display = 'block'; // 查詢失敗就顯示表單
+    });
+  });
 
 // ── 表單送出 ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {

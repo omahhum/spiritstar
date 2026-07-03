@@ -7,7 +7,7 @@
  *   <script src="js/auth.js"></script>
  *   <script src="js/top-menu.js" defer></script>
  *   （各 HTML 的 inline script 在 DOMContentLoaded 中追加 auth nav）
- */
+ */ 
 
 const NAV_ITEMS = [
   { href: 'about.html',   label: '認識聖輪宗' },

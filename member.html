@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
+<head>  
+  <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>會員專區 — 聖輪宗</title>
   <meta name="description" content="皈依信眾專區，填寫個人資料。">
@@ -10,7 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="js/auth.js"></script>
-    <script src="js/top-menu.js"></script>
+  <script src="js/top-menu.js"></script>
   <style>
     .page-header { padding-top:100px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
     .form-input { width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.75rem 1rem;outline:none;transition:border .3s;font-family:'Noto Sans TC',sans-serif; }
@@ -22,6 +22,23 @@
     .error-banner { background:rgba(122,31,43,.4);border:1px solid #c0392b;color:#ffcccc;padding:1rem 1.5rem;border-radius:4px;font-size:.92rem;text-align:center;display:none; }
     .form-row { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
     @media (max-width:600px) { .form-row { grid-template-columns:1fr; } }
+    /* ── 會員 sidebar 佈局 ── */
+    .member-layout { display:flex;gap:2rem;max-width:1100px;margin:0 auto;align-items:flex-start; }
+    .member-sidebar { flex:0 0 220px;position:sticky;top:100px; }
+    .member-sidebar a { display:flex;align-items:center;gap:.6rem;padding:.65rem 1rem;color:var(--text-muted);text-decoration:none;font-size:.88rem;border-left:3px solid transparent;transition:all .3s;border-radius:0 4px 4px 0; }
+    .member-sidebar a:hover { color:var(--gold-soft);background:rgba(212,175,55,.06);border-left-color:rgba(212,175,55,.3); }
+    .member-sidebar a.active { color:var(--gold);background:rgba(212,175,55,.1);border-left-color:var(--gold); }
+    .member-sidebar a .icon { font-size:1.1rem;flex-shrink:0; }
+    .member-content { flex:1;min-width:0; }
+    .member-section { display:none; }
+    .member-section.active { display:block; }
+    .member-mobile-nav { display:none;margin-bottom:1.5rem; }
+    .member-mobile-nav select { width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.7rem 1rem;font-size:.9rem;outline:none;border-radius:4px; }
+    @media (max-width:768px) {
+      .member-layout { flex-direction:column; }
+      .member-sidebar { display:none; }
+      .member-mobile-nav { display:block; }
+    }
   </style>
 </head>
 <body>
@@ -32,7 +49,7 @@
 <!-- Login gate -->
 <div id="loginGate" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;">
   <h2 style="font-family:'Noto Serif TC',serif;color:var(--gold);font-size:2rem;margin-bottom:1rem;">請先登入</h2>
-  <p style="color:var(--text-muted);margin-bottom:2rem;">登入後即可填寫皈依資料</p>
+  <p style="color:var(--text-muted);margin-bottom:2rem;">登入後即可使用會員專區</p>
   <button onclick="firebaseAuth.signInWithGoogle()" class="btn-gold">用 Gmail 登入</button>
 </div>
 
@@ -44,10 +61,9 @@
   </header>
 
   <section class="section">
-    <div style="max-width:600px;margin:0 auto;">
-
-      <!-- 登入者資訊 -->
-      <div class="card" style="margin-bottom:1.5rem;background:rgba(212,175,55,.06);">
+    <!-- 登入者資訊 -->
+    <div style="max-width:1100px;margin:0 auto 1.5rem;">
+      <div class="card" style="background:rgba(212,175,55,.06);">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
           <div>
             <div class="profile-badge">
@@ -59,101 +75,185 @@
           <button onclick="firebaseAuth.signOut();location.reload();" class="btn-outline" style="padding:.5rem 1.2rem;font-size:.82rem;">登出</button>
         </div>
       </div>
+    </div>
 
-      <!-- 存檔提示 / 錯誤提示 -->
-            <div id="savedBanner" class="saved-banner fade-in">✓ 資料已儲存，感謝您的填寫！</div>
-            <div id="errorBanner" class="error-banner fade-in">⚠ 儲存失敗，請稍後再試</div>
+    <!-- 手機版下拉選單 -->
+    <div class="member-mobile-nav">
+      <select id="mobileSectionSelect" onchange="switchSection(this.value)">
+        <option value="profile">📋 個人資料</option>
+        <option value="records">📜 報名記錄</option>
+        <option value="light">💡 光明燈</option>
+        <option value="dharma">📖 專屬法門</option>
+        <option value="calendar">📅 法會行事曆</option>
+        <option value="download">📦 法寶下載</option>
+        <option value="merit">🏆 功德統計</option>
+      </select>
+    </div>
 
-            <!-- 已皈依提示（初次隱藏，查詢後才顯示） -->
-            <div id="refugeeBanner" class="card fade-in" style="display:none;margin-top:1.5rem;background:rgba(212,175,55,.06);">
-              <div style="text-align:center;padding:2rem;">
-                <div style="font-size:2.5rem;margin-bottom:.5rem;">🙏</div>
-                <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:.5rem;">已完成皈依資料</h3>
-                <p id="refugeeGreeting" style="color:var(--gold-soft);font-size:1rem;"></p>
-                <p style="color:var(--text-muted);font-size:.85rem;margin-top:1rem;">感恩您的發心，相關法務訊息將於日後通知。</p>
-              </div>
-            </div>
-
-            <!-- 查詢中提示 -->
-            <div id="checkingStatus" style="display:none;text-align:center;padding:2rem;color:var(--text-muted);font-size:.9rem;">
-              查詢皈依資料中⋯
-            </div>
-
-            <!-- 皈依資料表單 -->
-      <div class="card" style="margin-top:1.5rem;">
-        <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:.3rem;">皈依資料</h3>
-        <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">請填寫以下資料即可完成皈依報名</p>
-
-        <form id="memberForm">
-
-          <!-- 姓名 -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">姓名 *</label>
-            <input type="text" name="name" id="inputName" required class="form-input" placeholder="您的姓名">
-          </div>
-
-          <!-- 性別 -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">性別（自我認同）</label>
-            <input type="text" name="gender" id="inputGender" class="form-input" placeholder="（選填）">
-          </div>
-
-          <!-- 生日 -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">生日（說明陽曆或農曆，不填時辰）</label>
-            <input type="text" name="birthday" id="inputBirthday" class="form-input" placeholder="例如：1990/01/01（陽曆）或 1990年春節（農曆）">
-          </div>
-
-          <!-- Email（唯讀，帶入登入帳號） -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">Email 信箱（已驗證）</label>
-            <input type="email" id="inputEmail" disabled class="form-input" style="opacity:.6;cursor:not-allowed;">
-          </div>
-
-          <!-- 居住或聯絡地址 -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">居住或聯絡地址</label>
-            <input type="text" name="address" id="inputAddress" class="form-input" placeholder="（選填）">
-          </div>
-
-          <!-- 行動電話 -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">行動電話</label>
-            <input type="tel" name="phone" id="inputPhone" class="form-input" placeholder="（選填）">
-          </div>
-
-          <!-- Facebook 名稱 -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">Facebook 名稱</label>
-            <input type="text" name="facebook" id="inputFacebook" class="form-input" placeholder="（選填）">
-          </div>
-
-          <!-- 推薦人 -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">推薦人</label>
-            <input type="text" name="referrer" id="inputReferrer" class="form-input" placeholder="（選填，請填寫推薦人姓名）">
-          </div>
-
-          <!-- 郵遞區號 -->
-          <div style="margin-bottom:1.2rem;">
-            <label class="form-label">郵遞區號</label>
-            <input type="text" name="zipcode" id="inputZipcode" class="form-input" placeholder="（選填）">
-          </div>
-
-          <!-- 備註 -->
-          <div style="margin-bottom:1.5rem;">
-            <label class="form-label">備註</label>
-            <textarea name="note" id="inputNote" rows="3" class="form-input" style="resize:vertical;" placeholder="（選填）"></textarea>
-          </div>
-
-          <button type="submit" class="btn-gold" style="width:100%;padding:1rem;cursor:pointer;background:transparent;">
-            送出皈依資料
-          </button>
-
-        </form>
+    <div class="member-layout">
+      <!-- 左側 sidebar -->
+      <div class="member-sidebar" id="memberSidebar">
+        <a href="#" class="active" data-section="profile" onclick="switchSection('profile');return false;">
+          <span class="icon">📋</span> 個人資料
+        </a>
+        <a href="#" data-section="records" onclick="switchSection('records');return false;">
+          <span class="icon">📜</span> 報名記錄
+        </a>
+        <a href="#" data-section="light" onclick="switchSection('light');return false;">
+          <span class="icon">💡</span> 光明燈
+        </a>
+        <a href="#" data-section="dharma" onclick="switchSection('dharma');return false;">
+          <span class="icon">📖</span> 專屬法門
+        </a>
+        <a href="#" data-section="calendar" onclick="switchSection('calendar');return false;">
+          <span class="icon">📅</span> 法會行事曆
+        </a>
+        <a href="#" data-section="download" onclick="switchSection('download');return false;">
+          <span class="icon">📦</span> 法寶下載
+        </a>
+        <a href="#" data-section="merit" onclick="switchSection('merit');return false;">
+          <span class="icon">🏆</span> 功德統計
+        </a>
       </div>
 
-    </div>
+      <!-- 右側內容區 -->
+      <div class="member-content">
+
+        <!-- ═══ 個人資料 ═══ -->
+        <div id="section-profile" class="member-section active">
+          <!-- 存檔提示 / 錯誤提示 -->
+          <div id="savedBanner" class="saved-banner fade-in">✓ 資料已儲存，感謝您的填寫！</div>
+          <div id="errorBanner" class="error-banner fade-in">⚠ 儲存失敗，請稍後再試</div>
+
+          <!-- 已皈依提示 -->
+          <div id="refugeeBanner" class="card fade-in" style="display:none;margin-bottom:1.5rem;background:rgba(212,175,55,.06);">
+            <div style="text-align:center;padding:2rem;">
+              <div style="font-size:2.5rem;margin-bottom:.5rem;">🙏</div>
+              <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:.5rem;">已完成皈依資料</h3>
+              <p id="refugeeGreeting" style="color:var(--gold-soft);font-size:1rem;"></p>
+              <p style="color:var(--text-muted);font-size:.85rem;margin-top:1rem;">感恩您的發心，相關法務訊息將於日後通知。</p>
+              <button onclick="showEditForm()" class="btn-outline" style="margin-top:1rem;padding:.5rem 1.2rem;font-size:.85rem;">修改資料</button>
+            </div>
+          </div>
+
+          <!-- 查詢中提示 -->
+          <div id="checkingStatus" style="display:none;text-align:center;padding:2rem;color:var(--text-muted);font-size:.9rem;">
+            查詢皈依資料中⋯
+          </div>
+
+          <!-- 皈依資料表單 -->
+          <div class="card" id="memberFormCard" style="margin-top:1.5rem;">
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:.3rem;">皈依資料</h3>
+            <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">請填寫以下資料即可完成皈依報名</p>
+
+            <form id="memberForm">
+              <!-- 姓名 -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">姓名 *</label>
+                <input type="text" name="name" id="inputName" required class="form-input" placeholder="您的姓名">
+              </div>
+              <!-- 性別 -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">性別（自我認同）</label>
+                <input type="text" name="gender" id="inputGender" class="form-input" placeholder="（選填）">
+              </div>
+              <!-- 生日 -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">生日（說明陽曆或農曆，不填時辰）</label>
+                <input type="text" name="birthday" id="inputBirthday" class="form-input" placeholder="例如：1990/01/01（陽曆）或 1990年春節（農曆）">
+              </div>
+              <!-- Email（唯讀） -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">Email 信箱（已驗證）</label>
+                <input type="email" id="inputEmail" disabled class="form-input" style="opacity:.6;cursor:not-allowed;">
+              </div>
+              <!-- 居住或聯絡地址 -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">居住或聯絡地址</label>
+                <input type="text" name="address" id="inputAddress" class="form-input" placeholder="（選填）">
+              </div>
+              <!-- 行動電話 -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">行動電話</label>
+                <input type="tel" name="phone" id="inputPhone" class="form-input" placeholder="（選填）">
+              </div>
+              <!-- Facebook 名稱 -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">Facebook 名稱</label>
+                <input type="text" name="facebook" id="inputFacebook" class="form-input" placeholder="（選填）">
+              </div>
+              <!-- 推薦人 -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">推薦人</label>
+                <input type="text" name="referrer" id="inputReferrer" class="form-input" placeholder="（選填，請填寫推薦人姓名）">
+              </div>
+              <!-- 郵遞區號 -->
+              <div style="margin-bottom:1.2rem;">
+                <label class="form-label">郵遞區號</label>
+                <input type="text" name="zipcode" id="inputZipcode" class="form-input" placeholder="（選填）">
+              </div>
+              <!-- 備註 -->
+              <div style="margin-bottom:1.5rem;">
+                <label class="form-label">備註</label>
+                <textarea name="note" id="inputNote" rows="3" class="form-input" style="resize:vertical;" placeholder="（選填）"></textarea>
+              </div>
+              <button type="submit" class="btn-gold" style="width:100%;padding:1rem;cursor:pointer;background:transparent;">
+                送出皈依資料
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ═══ 報名記錄（空）═══ -->
+        <div id="section-records" class="member-section">
+          <div class="card">
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">📜 報名記錄</h3>
+            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+          </div>
+        </div>
+
+        <!-- ═══ 光明燈（空）═══ -->
+        <div id="section-light" class="member-section">
+          <div class="card">
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">💡 光明燈</h3>
+            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+          </div>
+        </div>
+
+        <!-- ═══ 專屬法門（空）═══ -->
+        <div id="section-dharma" class="member-section">
+          <div class="card">
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">📖 專屬法門</h3>
+            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+          </div>
+        </div>
+
+        <!-- ═══ 法會行事曆（空）═══ -->
+        <div id="section-calendar" class="member-section">
+          <div class="card">
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">📅 法會行事曆</h3>
+            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+          </div>
+        </div>
+
+        <!-- ═══ 法寶下載（空）═══ -->
+        <div id="section-download" class="member-section">
+          <div class="card">
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">📦 法寶下載</h3>
+            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+          </div>
+        </div>
+
+        <!-- ═══ 功德統計（空）═══ -->
+        <div id="section-merit" class="member-section">
+          <div class="card">
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">🏆 功德統計</h3>
+            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+          </div>
+        </div>
+
+      </div><!-- .member-content -->
+    </div><!-- .member-layout -->
   </section>
 </div>
 
@@ -184,9 +284,35 @@ function updateAuthNav(user) {
   nav.appendChild(li);
 }
 
-// ── 主 auth 狀態監聽（不依賴 DOMContentLoaded，Firebase 會在 session restore 後觸發）──
+// ── sidebar 切換 ───────────────────────────────────────────────────
+function switchSection(id) {
+  // 隱藏所有 section
+  document.querySelectorAll('.member-section').forEach(el => el.classList.remove('active'));
+  // 顯示目標 section
+  const target = document.getElementById('section-' + id);
+  if (target) target.classList.add('active');
+  // sidebar  active 樣式
+  document.querySelectorAll('.member-sidebar a').forEach(el => el.classList.remove('active'));
+  const sidebarLink = document.querySelector('.member-sidebar a[data-section="' + id + '"]');
+  if (sidebarLink) sidebarLink.classList.add('active');
+  // 手機下拉同步
+  const mobileSelect = document.getElementById('mobileSectionSelect');
+  if (mobileSelect) mobileSelect.value = id;
+}
+
+// ── 修改資料（已皈依會員點擊） ──
+function showEditForm() {
+  // 隱藏已皈依提示，顯示表單（之後修改資料時要載入現有資料）
+  const formCard = document.getElementById('memberFormCard');
+  const form = document.getElementById('memberForm');
+  if (formCard) formCard.style.display = 'block';
+  if (form) form.style.display = 'block';
+  // 滾動到表單
+  if (formCard) formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── 主 auth 狀態監聽 ──────────────────────────────────────────────
 firebaseAuth.onAuthStateChanged(user => {
-  // 若 nav 已渲染就直接更新；否則等 DOMContentLoaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => updateAuthNav(user), { once: true });
   } else {
@@ -209,37 +335,35 @@ firebaseAuth.onAuthStateChanged(user => {
   const elEmail = document.getElementById('userEmail');
   const elInput = document.getElementById('inputEmail');
   if (elName)  elName.textContent  = user.displayName || user.email.split('@')[0];
-    if (elEmail) elEmail.textContent = user.email;
-    if (elInput) elInput.value       = user.email || '';
+  if (elEmail) elEmail.textContent = user.email;
+  if (elInput) elInput.value       = user.email || '';
 
-    // ── 查詢是否已皈依 ──────────────────────────────────────────
-    const memberForm  = document.getElementById('memberForm');
-    const refugeeBanner = document.getElementById('refugeeBanner');
-    const checkingStatus = document.getElementById('checkingStatus');
-    if (memberForm) memberForm.style.display = 'none';
-    if (refugeeBanner) refugeeBanner.style.display = 'none';
-    if (checkingStatus) checkingStatus.style.display = 'block';
+  // ── 查詢是否已皈依 ──────────────────────────────────────────
+  const memberForm  = document.getElementById('memberForm');
+  const refugeeBanner = document.getElementById('refugeeBanner');
+  const checkingStatus = document.getElementById('checkingStatus');
+  if (memberForm) memberForm.style.display = 'none';
+  if (refugeeBanner) refugeeBanner.style.display = 'none';
+  if (checkingStatus) checkingStatus.style.display = 'block';
 
-    firebaseAuth.checkRefugeeStatus(user.email).then(result => {
-      if (checkingStatus) checkingStatus.style.display = 'none';
-      if (result.found) {
-        // 已皈依 → 隱藏表單，顯示感恩提示
-        if (memberForm) memberForm.style.display = 'none';
-        if (refugeeBanner) {
-          const greet = document.getElementById('refugeeGreeting');
-          if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
-          refugeeBanner.style.display = 'block';
-          setTimeout(() => refugeeBanner.classList.add('visible'), 50);
-        }
-      } else {
-        // 未皈依 → 顯示表單
-        if (memberForm) memberForm.style.display = 'block';
+  firebaseAuth.checkRefugeeStatus(user.email).then(result => {
+    if (checkingStatus) checkingStatus.style.display = 'none';
+    if (result.found) {
+      if (memberForm) memberForm.style.display = 'none';
+      if (refugeeBanner) {
+        const greet = document.getElementById('refugeeGreeting');
+        if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
+        refugeeBanner.style.display = 'block';
+        setTimeout(() => refugeeBanner.classList.add('visible'), 50);
       }
-    }).catch(() => {
-      if (checkingStatus) checkingStatus.style.display = 'none';
-      if (memberForm) memberForm.style.display = 'block'; // 查詢失敗就顯示表單
-    });
+    } else {
+      if (memberForm) memberForm.style.display = 'block';
+    }
+  }).catch(() => {
+    if (checkingStatus) checkingStatus.style.display = 'none';
+    if (memberForm) memberForm.style.display = 'block';
   });
+});
 
 // ── 表單送出 ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {

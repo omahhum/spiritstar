@@ -132,7 +132,7 @@
               <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:.5rem;">已完成皈依資料</h3>
               <p id="refugeeGreeting" style="color:var(--gold-soft);font-size:1rem;"></p>
               <p style="color:var(--text-muted);font-size:.85rem;margin-top:1rem;">感恩您的發心，相關法務訊息將於日後通知。</p>
-              <button onclick="showEditForm()" class="btn-outline" style="margin-top:1rem;padding:.5rem 1.2rem;font-size:.85rem;">修改資料</button>
+              <button onclick="showEditForm()" class="btn-outline" style="margin-top:1rem;padding:.5rem 1.2rem;font-size:.85rem;" disabled>修改資料（載入中…）</button>
             </div>
           </div>
 
@@ -319,6 +319,12 @@ function showEditForm() {
   const form = document.getElementById('memberForm');
   if (!formCard || !form) return;
 
+  // 檢查資料是否已載入
+  if (!currentMemberData || !currentMemberData.found) {
+    alert('正在載入您的資料，請稍後再試');
+    return;
+  }
+
   // 切換為編輯模式
   isEditing = true;
 
@@ -391,39 +397,45 @@ firebaseAuth.onAuthStateChanged(user => {
   if (elInput) elInput.value       = user.email || '';
 
   // ── 查詢是否已皈依 ──────────────────────────────────────────
-  const memberForm  = document.getElementById('memberForm');
-  const refugeeBanner = document.getElementById('refugeeBanner');
-  const checkingStatus = document.getElementById('checkingStatus');
-  if (memberForm) memberForm.style.display = 'none';
-  if (refugeeBanner) refugeeBanner.style.display = 'none';
-  if (checkingStatus) checkingStatus.style.display = 'block';
+    const memberForm  = document.getElementById('memberForm');
+    const refugeeBanner = document.getElementById('refugeeBanner');
+    const checkingStatus = document.getElementById('checkingStatus');
+    if (memberForm) memberForm.style.display = 'none';
+    if (refugeeBanner) refugeeBanner.style.display = 'none';
+    if (checkingStatus) checkingStatus.style.display = 'block';
 
-  firebaseAuth.checkRefugeeStatus(user.email).then(async result => {
-      if (checkingStatus) checkingStatus.style.display = 'none';
-      if (result.found) {
-        if (memberForm) memberForm.style.display = 'none';
-        if (refugeeBanner) {
-          const greet = document.getElementById('refugeeGreeting');
-          if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
-          refugeeBanner.style.display = 'block';
-          setTimeout(() => refugeeBanner.classList.add('visible'), 50);
-        }
-        // 抓取完整會員資料，供編輯表單使用
-        try {
-          const fullData = await firebaseAuth.getMemberData(user.email);
-          if (fullData && fullData.found) {
-            currentMemberData = fullData;
+    firebaseAuth.checkRefugeeStatus(user.email).then(async result => {
+        if (checkingStatus) checkingStatus.style.display = 'none';
+        if (result.found) {
+          if (memberForm) memberForm.style.display = 'none';
+          if (refugeeBanner) {
+            const greet = document.getElementById('refugeeGreeting');
+            if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
+            refugeeBanner.style.display = 'block';
+            setTimeout(() => refugeeBanner.classList.add('visible'), 50);
           }
-        } catch(e) {
-          console.warn('無法讀取會員詳細資料', e);
+          // 抓取完整會員資料，供編輯表單使用
+          try {
+                    const fullData = await firebaseAuth.getMemberData(user.email);
+                    if (fullData && fullData.found) {
+                      currentMemberData = fullData;
+                      // 資料載入完成，啟用修改按鈕
+                      const editBtn = refugeeBanner.querySelector('button[onclick="showEditForm()"]');
+                      if (editBtn) {
+                        editBtn.disabled = false;
+                        editBtn.textContent = '修改資料';
+                      }
+                    }
+                  } catch(e) {
+                    console.warn('無法讀取會員詳細資料', e);
+                  }
+        } else {
+          if (memberForm) memberForm.style.display = 'block';
         }
-      } else {
+      }).catch(() => {
+        if (checkingStatus) checkingStatus.style.display = 'none';
         if (memberForm) memberForm.style.display = 'block';
-      }
-    }).catch(() => {
-      if (checkingStatus) checkingStatus.style.display = 'none';
-      if (memberForm) memberForm.style.display = 'block';
-    });
+      });
 });
 
 // ── 表單送出 ──────────────────────────────────────────────────────

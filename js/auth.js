@@ -65,16 +65,32 @@ function onAuthStateChanged(callback) {
 }
 
 /**
+ * 取得 Firebase ID Token（用于 GAS 驗證）
+ */
+async function getFirebaseToken() {
+  const user = auth.currentUser;
+  if (!user) throw new Error('未登入');
+  try {
+    // 強迫刷新 token，確保是最新的
+    return await user.getIdToken(true);
+  } catch (e) {
+    console.error('無法取得 Firebase token:', e);
+    throw new Error('無法取得驗證 token，請重新登入');
+  }
+}
+
+/**
  * 儲存會員資料到 Google Sheet（新增）
  * data = { name, gender, birthday, address, phone, facebook, referrer, zipcode, note }
  */
 async function saveMemberData(data) {
   const user = auth.currentUser;
   if (!user) throw new Error("未登入");
-
+  
+  const token = await getFirebaseToken();
   const payload = new URLSearchParams({
     ...data,
-    email: user.email
+    token: token  // 改用 token，不直接傳 email
   });
 
   const response = await fetch(APPS_SCRIPT_URL, {
@@ -96,10 +112,11 @@ async function saveMemberData(data) {
 async function updateMemberData(data) {
   const user = auth.currentUser;
   if (!user) throw new Error("未登入");
-
+  
+  const token = await getFirebaseToken();
   const payload = new URLSearchParams({
     ...data,
-    email: user.email,
+    token: token,  // 改用 token
     action: 'update'
   });
 
@@ -116,13 +133,16 @@ async function updateMemberData(data) {
 }
 
 /**
- * 讀取會員的現有皈依資料（根據 email）
- * @param {string} email
+ * 讀取會員的現有皈依資料（根據 Firebase token 驗證）
  * @returns {Promise<{found: boolean, name?: string, gender?: string, ...}>}
  */
-async function getMemberData(email) {
+async function getMemberData() {
+  const user = auth.currentUser;
+  if (!user) return { found: false };
+  
   try {
-    const url = APPS_SCRIPT_URL + '?action=getMemberData&email=' + encodeURIComponent(email);
+    const token = await getFirebaseToken();
+    const url = APPS_SCRIPT_URL + '?action=getMemberData&token=' + encodeURIComponent(token);
     const response = await fetch(url, { method: 'GET', redirect: 'follow' });
     const text = await response.text();
     try {

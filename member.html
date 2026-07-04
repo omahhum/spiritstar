@@ -261,6 +261,10 @@
 <script src="js/footer.js"></script>
 
 <script>
+// ── 全域變數 ────────────────────────────────────────────────────
+let isEditing = false;       // true = 編輯模式, false = 新增皈依
+let currentMemberData = {};  // 從 Sheets 讀回的現有資料
+
 // ── 更新 nav 的 auth 項目 ──────────────────────────────────────────
 function updateAuthNav(user) {
   const nav = document.getElementById('navLinks');
@@ -286,29 +290,77 @@ function updateAuthNav(user) {
 
 // ── sidebar 切換 ───────────────────────────────────────────────────
 function switchSection(id) {
-  // 隱藏所有 section
   document.querySelectorAll('.member-section').forEach(el => el.classList.remove('active'));
-  // 顯示目標 section
   const target = document.getElementById('section-' + id);
   if (target) target.classList.add('active');
-  // sidebar  active 樣式
   document.querySelectorAll('.member-sidebar a').forEach(el => el.classList.remove('active'));
   const sidebarLink = document.querySelector('.member-sidebar a[data-section="' + id + '"]');
   if (sidebarLink) sidebarLink.classList.add('active');
-  // 手機下拉同步
   const mobileSelect = document.getElementById('mobileSectionSelect');
   if (mobileSelect) mobileSelect.value = id;
 }
 
+// ── 填入表單資料 ─────────────────────────────────────────────────
+function fillForm(data) {
+  document.getElementById('inputName').value = data.name || '';
+  document.getElementById('inputGender').value = data.gender || '';
+  document.getElementById('inputBirthday').value = data.birthday || '';
+  document.getElementById('inputAddress').value = data.address || '';
+  document.getElementById('inputPhone').value = data.phone || '';
+  document.getElementById('inputFacebook').value = data.facebook || '';
+  document.getElementById('inputReferrer').value = data.referrer || '';
+  document.getElementById('inputZipcode').value = data.zipcode || '';
+  document.getElementById('inputNote').value = data.note || '';
+}
+
 // ── 修改資料（已皈依會員點擊） ──
 function showEditForm() {
-  // 隱藏已皈依提示，顯示表單（之後修改資料時要載入現有資料）
   const formCard = document.getElementById('memberFormCard');
   const form = document.getElementById('memberForm');
-  if (formCard) formCard.style.display = 'block';
-  if (form) form.style.display = 'block';
-  // 滾動到表單
-  if (formCard) formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!formCard || !form) return;
+
+  // 切換為編輯模式
+  isEditing = true;
+
+  // 將表單標題文字改為「修改皈依資料」
+  const formTitle = formCard.querySelector('h3');
+  const formSub = formCard.querySelector('p');
+  if (formTitle) formTitle.textContent = '修改皈依資料';
+  if (formSub) formSub.textContent = '請確認並修改您的皈依資料';
+
+  // 按鈕文字改為「儲存修改」
+  const submitBtn = form.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.textContent = '儲存修改';
+
+  // 把既有資料填入表單
+  fillForm(currentMemberData);
+
+  // 顯示表單
+  formCard.style.display = 'block';
+  form.style.display = 'block';
+  formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── 重設表單為新增模式 ──────────────────────────────────────────
+function resetFormToNew() {
+  isEditing = false;
+  const formCard = document.getElementById('memberFormCard');
+  const form = document.getElementById('memberForm');
+  if (!formCard || !form) return;
+
+  const formTitle = formCard.querySelector('h3');
+  const formSub = formCard.querySelector('p');
+  if (formTitle) formTitle.textContent = '皈依資料';
+  if (formSub) formSub.textContent = '請填寫以下資料即可完成皈依報名';
+
+  const submitBtn = form.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.textContent = '送出皈依資料';
+
+  form.reset();
+  // Email 填入
+  const user = firebaseAuth.getCurrentUser();
+  const elInput = document.getElementById('inputEmail');
+  if (elInput && user) elInput.value = user.email || '';
 }
 
 // ── 主 auth 狀態監聽 ──────────────────────────────────────────────
@@ -346,23 +398,32 @@ firebaseAuth.onAuthStateChanged(user => {
   if (refugeeBanner) refugeeBanner.style.display = 'none';
   if (checkingStatus) checkingStatus.style.display = 'block';
 
-  firebaseAuth.checkRefugeeStatus(user.email).then(result => {
-    if (checkingStatus) checkingStatus.style.display = 'none';
-    if (result.found) {
-      if (memberForm) memberForm.style.display = 'none';
-      if (refugeeBanner) {
-        const greet = document.getElementById('refugeeGreeting');
-        if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
-        refugeeBanner.style.display = 'block';
-        setTimeout(() => refugeeBanner.classList.add('visible'), 50);
+  firebaseAuth.checkRefugeeStatus(user.email).then(async result => {
+      if (checkingStatus) checkingStatus.style.display = 'none';
+      if (result.found) {
+        if (memberForm) memberForm.style.display = 'none';
+        if (refugeeBanner) {
+          const greet = document.getElementById('refugeeGreeting');
+          if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
+          refugeeBanner.style.display = 'block';
+          setTimeout(() => refugeeBanner.classList.add('visible'), 50);
+        }
+        // 抓取完整會員資料，供編輯表單使用
+        try {
+          const fullData = await firebaseAuth.getMemberData(user.email);
+          if (fullData && fullData.found) {
+            currentMemberData = fullData;
+          }
+        } catch(e) {
+          console.warn('無法讀取會員詳細資料', e);
+        }
+      } else {
+        if (memberForm) memberForm.style.display = 'block';
       }
-    } else {
+    }).catch(() => {
+      if (checkingStatus) checkingStatus.style.display = 'none';
       if (memberForm) memberForm.style.display = 'block';
-    }
-  }).catch(() => {
-    if (checkingStatus) checkingStatus.style.display = 'none';
-    if (memberForm) memberForm.style.display = 'block';
-  });
+    });
 });
 
 // ── 表單送出 ──────────────────────────────────────────────────────
@@ -388,10 +449,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const errBanner = document.getElementById('errorBanner');
     errBanner.style.display = 'none';
     try {
-      await firebaseAuth.saveMemberData(data);
+      if (isEditing) {
+        // 編輯模式：更新既有資料
+        await firebaseAuth.updateMemberData(data);
+        // 更新 currentMemberData
+        currentMemberData = { ...currentMemberData, ...data };
+        // 更新 banner 上的問候名稱
+        const greet = document.getElementById('refugeeGreeting');
+        if (greet && data.name) greet.textContent = `親愛的 ${data.name} 菩薩，您好。`;
+        banner.textContent = '✓ 資料已更新，感謝您的修改！';
+      } else {
+        // 新增模式
+        await firebaseAuth.saveMemberData(data);
+        banner.textContent = '✓ 資料已儲存，感謝您的填寫！';
+      }
       banner.style.display = 'block';
       banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       setTimeout(() => { banner.style.display = 'none'; }, 5000);
+      // 編輯成功後，隱藏表單、顯示已皈依提示
+      if (isEditing) {
+        const formCard = document.getElementById('memberFormCard');
+        const refugeeBanner = document.getElementById('refugeeBanner');
+        if (formCard) formCard.style.display = 'none';
+        if (form) form.style.display = 'none';
+        if (refugeeBanner) refugeeBanner.style.display = 'block';
+        resetFormToNew(); // 重設為新增模式（下次開啟時）
+        // 重新載入已皈依狀態
+        const user = firebaseAuth.getCurrentUser();
+        if (user) {
+          const result = await firebaseAuth.checkRefugeeStatus(user.email);
+          if (result.found) {
+            currentMemberData.name = result.name || data.name;
+          }
+        }
+      }
     } catch(err) {
       errBanner.style.display = 'block';
       errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

@@ -137,18 +137,20 @@ async function getMemberData(email) {
 
 /**
  * 讀取本地會員資料（舊相容用，仍然讀 localStorage）
+ * @deprecated 改用 firebaseAuth.getMemberDataFromSheet()
  */
-function getMemberData() {
+function getMemberDataLocal() {
   const raw = localStorage.getItem("holyChakra_member");
   if (!raw) return null;
   try { return JSON.parse(raw); } catch { return null; }
 }
 
 /**
- * 檢查是否已填寫過皈依資料
+ * 檢查是否已填寫過皈依資料（本地檢查，已棄用）
+ * @deprecated 改用 checkRefugeeStatus
  */
 function hasMemberData() {
-  return getMemberData() !== null;
+  return getMemberDataLocal() !== null;
 }
 
 /**

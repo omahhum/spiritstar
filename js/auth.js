@@ -16,7 +16,8 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3Plb0dcAJ-FFUV9bhltfvd-hluckM1vD_muRzWGLr4W4St0Rjpzk-K2IjtUNL2K5wrw/exec';
+//const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3Plb0dcAJ-FFUV9bhltfvd-hluckM1vD_muRzWGLr4W4St0Rjpzk-K2IjtUNL2K5wrw/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby26_AoYInWRWLAfY-tQ8qo7UF8xWCwnE2BNBKgqDW4kf3RktIe0zINC2pRTm5yJ_NqLg/exec';
 
 /**
  * 初始化後處理 redirect 結果（頁面載入時呼叫）
@@ -64,7 +65,7 @@ function onAuthStateChanged(callback) {
 }
 
 /**
- * 儲存會員資料到 Google Sheet
+ * 儲存會員資料到 Google Sheet（新增）
  * data = { name, gender, birthday, address, phone, facebook, referrer, zipcode, note }
  */
 async function saveMemberData(data) {
@@ -83,9 +84,54 @@ async function saveMemberData(data) {
   });
 
   const text = await response.text();
-  // Apps Script 成功時 body 是 {"status":"ok"}，即使 response.ok 非 200 也要允許
   if (!text.includes('ok')) {
     throw new Error('儲存失敗，請稍後再試');
+  }
+}
+
+/**
+ * 更新會員資料（修改既有皈依資料，取代新增一列）
+ * data = { name, gender, birthday, address, phone, facebook, referrer, zipcode, note }
+ */
+async function updateMemberData(data) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("未登入");
+
+  const payload = new URLSearchParams({
+    ...data,
+    email: user.email,
+    action: 'update'
+  });
+
+  const response = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: payload,
+    redirect: 'follow'
+  });
+
+  const text = await response.text();
+  if (!text.includes('ok')) {
+    throw new Error('更新失敗，請稍後再試');
+  }
+}
+
+/**
+ * 讀取會員的現有皈依資料（根據 email）
+ * @param {string} email
+ * @returns {Promise<{found: boolean, name?: string, gender?: string, ...}>}
+ */
+async function getMemberData(email) {
+  try {
+    const url = APPS_SCRIPT_URL + '?action=getMemberData&email=' + encodeURIComponent(email);
+    const response = await fetch(url, { method: 'GET', redirect: 'follow' });
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { found: false };
+    }
+  } catch {
+    return { found: false };
   }
 }
 
@@ -112,12 +158,9 @@ function hasMemberData() {
  */
 async function checkRefugeeStatus(email) {
   try {
-    const payload = new URLSearchParams({ action: 'checkRefugee', email });
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: payload,
-      redirect: 'follow'
-    });
+    // 用 GET 方式帶參數（避開 POST redirect body 遺失問題）
+    const url = APPS_SCRIPT_URL + '?action=checkRefugee&email=' + encodeURIComponent(email);
+    const response = await fetch(url, { method: 'GET', redirect: 'follow' });
     const text = await response.text();
     try {
       const data = JSON.parse(text);
@@ -137,6 +180,7 @@ window.firebaseAuth = {
   getCurrentUser,
   onAuthStateChanged,
   saveMemberData,
+  updateMemberData,
   getMemberData,
   hasMemberData,
   checkRefugeeStatus

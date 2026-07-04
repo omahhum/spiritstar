@@ -397,44 +397,47 @@ firebaseAuth.onAuthStateChanged(user => {
   if (elInput) elInput.value       = user.email || '';
 
   // ── 查詢是否已皈依 ──────────────────────────────────────────
-    const memberForm  = document.getElementById('memberForm');
+    const memberFormCard = document.getElementById('memberFormCard');
     const refugeeBanner = document.getElementById('refugeeBanner');
     const checkingStatus = document.getElementById('checkingStatus');
-    if (memberForm) memberForm.style.display = 'none';
+  
+    if (memberFormCard) memberFormCard.style.display = 'none';
     if (refugeeBanner) refugeeBanner.style.display = 'none';
     if (checkingStatus) checkingStatus.style.display = 'block';
 
-    firebaseAuth.checkRefugeeStatus(user.email).then(async result => {
+    firebaseAuth.checkRefugeeStatus().then(async result => {
         if (checkingStatus) checkingStatus.style.display = 'none';
+      
         if (result.found) {
-          if (memberForm) memberForm.style.display = 'none';
+          // 情況 A：已皈依 -> 顯示祈福 Banner，保持表單隱藏
+          if (memberFormCard) memberFormCard.style.display = 'none'; 
           if (refugeeBanner) {
             const greet = document.getElementById('refugeeGreeting');
             if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
             refugeeBanner.style.display = 'block';
-            setTimeout(() => refugeeBanner.classList.add('visible'), 50);
           }
-          // 抓取完整會員資料，供編輯表單使用
-                  try {
-                    const fullData = await firebaseAuth.getMemberData();  // 不再傳 email
-                    if (fullData && fullData.found) {
-                      currentMemberData = fullData;
-                      // 資料載入完成，啟用修改按鈕
-                      const editBtn = refugeeBanner.querySelector('button[onclick="showEditForm()"]');
-                      if (editBtn) {
-                        editBtn.disabled = false;
-                        editBtn.textContent = '修改資料';
-                      }
-                    }
-                  } catch(e) {
-                    console.warn('無法讀取會員詳細資料', e);
-                  }
+        
+          // 抓取完整會員資料
+          try {
+            const fullData = await firebaseAuth.getMemberData(); 
+            if (fullData && fullData.found) {
+              currentMemberData = fullData;
+              const editBtn = refugeeBanner.querySelector('button[onclick="showEditForm()"]');
+              if (editBtn) {
+                editBtn.disabled = false;
+                editBtn.textContent = '修改資料';
+              }
+            }
+          } catch(e) {
+            console.warn('無法讀取會員詳細資料', e);
+          }
         } else {
-          if (memberForm) memberForm.style.display = 'block';
+          // 情況 B：未皈依 -> 顯示全新填寫表單
+          if (memberFormCard) memberFormCard.style.display = 'block';
         }
       }).catch(() => {
         if (checkingStatus) checkingStatus.style.display = 'none';
-        if (memberForm) memberForm.style.display = 'block';
+        if (memberFormCard) memberFormCard.style.display = 'block';
       });
 });
 

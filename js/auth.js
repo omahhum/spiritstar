@@ -142,15 +142,28 @@ async function getMemberData() {
   
   try {
     const token = await getFirebaseToken();
-    const url = APPS_SCRIPT_URL + '?action=getMemberData&token=' + encodeURIComponent(token);
-    const response = await fetch(url, { method: 'GET', redirect: 'follow' });
+    
+    // 改用 POST 避免 token 在 URL 中被截斷
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'getMemberData',
+        token: token
+      })
+    });
+    
     const text = await response.text();
     try {
       return JSON.parse(text);
     } catch {
       return { found: false };
     }
-  } catch {
+  } catch (e) {
+    console.error('getMemberData 錯誤:', e);
     return { found: false };
   }
 }

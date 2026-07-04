@@ -187,15 +187,30 @@ function hasMemberData() {
 }
 
 /**
- * 查詢這個 email 是否在 Google Sheets 的白名單（皈依學員）中
- * @param {string} email
+ * 查詢這個學員是否已在 Google Sheets 中皈依（使用 Token 進行後端驗證）
  * @returns {Promise<{found: boolean, name?: string}>}
  */
-async function checkRefugeeStatus(email) {
+async function checkRefugeeStatus() {
+  const user = auth.currentUser;
+  if (!user) return { found: false };
+
   try {
-    // 用 GET 方式帶參數（避開 POST redirect body 遺失問題）
-    const url = APPS_SCRIPT_URL + '?action=checkRefugee&email=' + encodeURIComponent(email);
-    const response = await fetch(url, { method: 'GET', redirect: 'follow' });
+    // 1. 取得安全的 Firebase ID Token
+    const token = await getFirebaseToken();
+    
+    // 2. 改用 POST 請求發送給 GAS
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        action: 'checkRefugee',
+        token: token
+      })
+    });
+    
     const text = await response.text();
     try {
       const data = JSON.parse(text);
@@ -203,7 +218,8 @@ async function checkRefugeeStatus(email) {
     } catch {
       return { found: false };
     }
-  } catch {
+  } catch (e) {
+    console.error('checkRefugeeStatus 錯誤:', e);
     return { found: false };
   }
 }

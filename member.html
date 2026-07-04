@@ -482,22 +482,21 @@ document.addEventListener('DOMContentLoaded', () => {
       banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       setTimeout(() => { banner.style.display = 'none'; }, 5000);
       // 編輯成功後，隱藏表單、顯示已皈依提示
-      if (isEditing) {
-        const formCard = document.getElementById('memberFormCard');
-        const refugeeBanner = document.getElementById('refugeeBanner');
-        if (formCard) formCard.style.display = 'none';
-        if (form) form.style.display = 'none';
-        if (refugeeBanner) refugeeBanner.style.display = 'block';
-        resetFormToNew(); // 重設為新增模式（下次開啟時）
-        // 重新載入已皈依狀態
-        const user = firebaseAuth.getCurrentUser();
-        if (user) {
-          const result = await firebaseAuth.checkRefugeeStatus(user.email);
-          if (result.found) {
-            currentMemberData.name = result.name || data.name;
-          }
-        }
-      }
+            if (isEditing) {
+              const formCard = document.getElementById('memberFormCard');
+              const refugeeBanner = document.getElementById('refugeeBanner');
+              if (formCard) formCard.style.display = 'none';
+              if (form) form.style.display = 'none';
+              if (refugeeBanner) refugeeBanner.style.display = 'block';
+        
+              // 不急著重設表單，讓 currentMemberData 與 isEditing 狀態保持正確
+        
+              // 重新載入已皈依狀態（確保拿到後端最新的正確姓名）
+              const result = await firebaseAuth.checkRefugeeStatus(); // 已移除 user.email 參數
+              if (result.found) {
+                currentMemberData.name = result.name || data.name;
+              }
+            }
     } catch(err) {
       errBanner.style.display = 'block';
       errBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

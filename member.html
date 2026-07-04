@@ -422,35 +422,35 @@ async function checkRefugeeAndRender() {
     if (checkingStatus) checkingStatus.style.display = 'none';
   
     if (result.found) {
-      // 情況 A：已皈依 -> 顯示祈福 Banner
-      if (refugeeBanner) {
-        const greet = document.getElementById('refugeeGreeting');
-        if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
-        refugeeBanner.style.display = 'block';
-      }
-    
-      // 抓取完整會員資料，並自動打開修改表單
-      try {
-        const fullData = await firebaseAuth.getMemberData(); 
-        if (fullData && fullData.found) {
-          currentMemberData = fullData;
+          // 情況 A：已皈依 -> 抓取完整會員資料，並自動打開修改表單
+          try {
+            const fullData = await firebaseAuth.getMemberData(); 
+            if (fullData && fullData.found) {
+              currentMemberData = fullData;
           
-          // 自動調用 showEditForm() 顯示表單並填入資料
-          if (typeof showEditForm === 'function') {
-            showEditForm();
-          } else {
-            // 防禦邏輯：如果 showEditForm 還沒載入，手動強制顯示
+              // 自動調用 showEditForm() 顯示表單並填入資料
+              if (typeof showEditForm === 'function') {
+                showEditForm();
+              } else {
+                // 防禦邏輯：如果 showEditForm 還沒載入，手動強制顯示
+                if (memberFormCard) memberFormCard.style.display = 'block';
+                if (memberForm) memberForm.style.display = 'block';
+              }
+            } else {
+              // 後端說已皈依，但讀不到詳細資料 → 顯示 Banner 提示
+              if (refugeeBanner) {
+                const greet = document.getElementById('refugeeGreeting');
+                if (greet) greet.textContent = result.name ? `親愛的 ${result.name} 菩薩，您好。` : '感恩您成為皈依弟子。';
+                refugeeBanner.style.display = 'block';
+              }
+            }
+          } catch(e) {
+            console.warn('無法讀取會員詳細資料', e);
+            // 即使讀取失敗，也顯示表單讓使用者可以重新填寫
             if (memberFormCard) memberFormCard.style.display = 'block';
             if (memberForm) memberForm.style.display = 'block';
           }
-        }
-      } catch(e) {
-        console.warn('無法讀取會員詳細資料', e);
-        // 即使讀取失敗，也顯示表單讓使用者可以重新填寫
-        if (memberFormCard) memberFormCard.style.display = 'block';
-        if (memberForm) memberForm.style.display = 'block';
-      }
-    } else {
+        } else {
       // 情況 B：未皈依 -> 顯示全新填寫表單
       if (memberFormCard) memberFormCard.style.display = 'block';
       if (memberForm) memberForm.style.display = 'block';

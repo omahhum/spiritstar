@@ -415,8 +415,8 @@ firebaseAuth.onAuthStateChanged(user => {
             setTimeout(() => refugeeBanner.classList.add('visible'), 50);
           }
           // 抓取完整會員資料，供編輯表單使用
-          try {
-                    const fullData = await firebaseAuth.getMemberData(user.email);
+                  try {
+                    const fullData = await firebaseAuth.getMemberData();  // 不再傳 email
                     if (fullData && fullData.found) {
                       currentMemberData = fullData;
                       // 資料載入完成，啟用修改按鈕

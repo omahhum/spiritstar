@@ -52,7 +52,9 @@ C:\Users\yebi\Desktop\聖輪宗網站\
 
 ---
 
-## 每次修改網站檔案後，自動同步到 GitHub
+## 上傳 GitHub 的絕對死規定
+
+**🚨 只能上傳 `website/` 目錄裡的檔案，其他任何檔案都不得上傳到 GitHub。**
 
 修改 `website/` 下的任何 `.html`、`.js`、`.css` 檔案後，**必須立即執行上傳到 GitHub**，不需要等用戶提醒。
 
@@ -94,6 +96,17 @@ for f in ["js/top-menu.js", "index.html", "member.html", "about.html",
 ### 觸發時機
 
 每次使用 `patch`、`write_file` 或任何工具修改了 `website/` 下的程式碼，就立刻執行上傳。**主動執行，不詢問**。
+
+### 禁止上傳的檔案
+
+**嚴禁上傳以下檔案到 GitHub：**
+- `AGENTS.md`、`HERMES.md`、`SKILL.md`
+- `github-token.txt`、`gas_code_gemini.gs`
+- `plan.md`、`config.yaml`、`計劃.md`、`儀軌*.md`
+- `.opencode/`、`.git/`、`website - 複製/`
+- 任何其他非 `website/` 目錄下的檔案
+
+**上傳時務必檢查路徑，確保只上傳 `website/` 下的檔案。**
 
 ### GitHub Repo 資訊
 

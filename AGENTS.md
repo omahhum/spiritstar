@@ -16,6 +16,19 @@
 
 ## 核心開發原則
 
+### 0. 🔴 上傳 GitHub 的絕對死規定
+
+**只能上傳 `website/` 目錄裡的檔案，其他任何檔案都不得上傳到 GitHub。**
+
+**嚴禁上傳：**
+- `AGENTS.md`、`HERMES.md`、`SKILL.md`
+- `github-token.txt`、`gas_code_gemini.gs`
+- `plan.md`、`config.yaml`、任何計畫文件
+- `.opencode/`、`.git/`、備份目錄
+- 任何其他非 `website/` 下的檔案
+
+每次上傳前必須檢查路徑，違犯此規定者將造成重大資安風險。
+
 ### 1. 先備份，再修改
 修改任何檔案前，確認有備份版本：
 - HTML 備份: `member.html.bak`, `member.html.bak2`

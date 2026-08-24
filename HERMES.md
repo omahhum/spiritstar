@@ -52,6 +52,84 @@ C:\Users\yebi\Desktop\聖輪宗網站\
 
 ---
 
+## 每次修改網站檔案後，自動同步到 GitHub
+
+修改 `website/` 下的任何 `.html`、`.js`、`.css` 檔案後，**必須立即執行上傳到 GitHub**，不需要等用戶提醒。
+
+### 上傳方式（使用 `requests` 庫）
+
+使用 Python `requests` 庫（`urllib` 的 PUT 有編碼問題，勿用）：
+
+```python
+import requests, base64, os
+
+with open("github-token.txt", "rb") as f:
+    raw = f.read()
+lines = raw.decode("utf-8").split("\r\n")
+ghp = [l for l in lines if l.startswith("ghp_")][0].strip()
+
+REPO = "omahhum/spiritstar"
+BRANCH = "master"
+API = f"https://api.github.com/repos/{REPO}/contents"
+
+s = requests.Session()
+s.headers.update({"Accept": "application/vnd.github.v3+json", "Authorization": f"token {ghp}"})
+
+# 每次修改後只上傳有變動的檔案
+for f in ["js/top-menu.js", "index.html", "member.html", "about.html",
+          "contact.html", "gospel.html", "methods.html", "refuge.html",
+          "js/auth.js", "css/style.css"]:
+    local_path = os.path.join("website", f)
+    if not os.path.exists(local_path):
+        continue
+    with open(local_path, "rb") as fh:
+        content = base64.b64encode(fh.read()).decode()
+    r = s.get(f"{API}/{f}", params={"ref": BRANCH})
+    sha = r.json()["sha"]
+    data = {"message": f"update: {f}", "content": content, "branch": BRANCH, "sha": sha}
+    r2 = s.put(f"{API}/{f}", json=data)
+    print(f"✓ {f}" if r2.status_code == 200 else f"✗ {f}: {r2.status_code}")
+```
+
+### 觸發時機
+
+每次使用 `patch`、`write_file` 或任何工具修改了 `website/` 下的程式碼，就立刻執行上傳。**主動執行，不詢問**。
+
+### GitHub Repo 資訊
+
+- Repo: `omahhum/spiritstar`
+- Branch: `master`
+- 發布位置: https://srichakra.spiritstar.org/（GitHub Pages）
+- 本地 website\ 即是Github 的根目錄
+
+### 網站技術棧
+
+- Firebase Auth（Gmail 登入）+ Apps Script + Google Sheets
+- 成員皈依報名：member.html → POST to Apps Script URL → 寫入 Sheet
+- 共用導航：js/top-menu.js（所有 HTML 共用，nav 預留 `id="navLinks"`）
+- 配色：深夜藍 #0F172A / 古金 #D4AF37 / 象牙白 #F8F5EE / 藏紅 #7A1F2B
+
+### top-menu.js 的 auth 規範（2026-06-12 更新）
+
+`top-menu.js` 純靜態導航，**不含任何 auth 邏輯**。Auth nav item（登入/會員名稱/登出）由各 HTML 的 inline script 在 `DOMContentLoaded` 中追加至 `id="navLinks"` 的 `<ul>` 內。
+
+`top-menu.js` 的 script 標籤在 HTML 中**不加 `defer`**，確保在 Firebase session restore 觸發 `onAuthStateChanged` 之前，nav 已經渲染完畢，listener 才不會 miss 第一次 fire。
+
+### Firebase Auth 登入規範（2026-06-12 新增）
+
+**嚴禁在此專案中使用 `signInWithRedirect` 進行登入！後續任何 AI Agent 修改此專案時，務必遵守以下規範：**
+
+1. **必須使用彈出視窗登入 (`signInWithPopup`)**：
+   - **原因**：由於現代瀏覽器（Chrome, Safari, Brave 等）加強了第三方 Cookie 與跨網域儲存分割 (Storage Partitioning) 的隱私保護限制，若使用 `signInWithRedirect`，登入跳轉回來後，Firebase 往往無法讀取並還原登入狀態，導致使用者陷入「無限登入卻仍顯示未登入」的狀態。
+   - **解決方案**：一律使用 `auth.signInWithPopup(googleProvider)`。
+
+2. **必須保留並強化錯誤提示 (Error Handling)**：
+   - 呼叫 `signInWithPopup` 時必須附加 `.catch()` 區塊。
+   - 若登入失敗，必須使用 `alert()` 或 UI 顯眼元件告知使用者詳細錯誤訊息。
+   - **重要提示**：如果錯誤訊息為 `auth/unauthorized-domain`，應在錯誤訊息中明確提示管理員必須至 Firebase Console 將當前網域（如 `srichakra.spiritstar.org`）加入「授權網域 (Authorized domains)」中。
+
+---
+
 ## 技術規範
 
 ### 1. Firebase Auth 規範（重要！）

@@ -1,0 +1,138 @@
+/* 佛頂金輪大壇 募資頁 — 頁面專用樣式
+   僅供 website/golden-wheel/ 使用；全站樣式仍在 ../css/style.css
+   色票沿用站台：深夜藍 #0F172A／古金 #D4AF37／象牙白 #F8F5EE／藏紅 #7A1F2B */
+
+/* ── 首屏主視覺 ── */
+.gw-hero {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: clamp(94px, 12vh, 116px) 1.5rem clamp(30px, 5vh, 46px);
+  background: radial-gradient(ellipse at 50% 44%, #1a2744 0%, #0F172A 72%);
+}
+.gw-hero::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  width: min(720px, 132vw); height: min(720px, 132vw);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23D4AF37'%3E%3Ccircle cx='400' cy='400' r='372' stroke-width='0.6' opacity='0.13'/%3E%3Ccircle cx='400' cy='400' r='300' stroke-width='0.5' opacity='0.11'/%3E%3Ccircle cx='400' cy='400' r='228' stroke-width='0.5' opacity='0.09'/%3E%3Ccircle cx='400' cy='400' r='156' stroke-width='0.4' opacity='0.08'/%3E%3Ccircle cx='400' cy='400' r='84' stroke-width='0.4' opacity='0.07'/%3E%3C/g%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='0.45' opacity='0.11'%3E%3Cpath d='M400 28 V772'/%3E%3Cpath d='M28 400 H772'/%3E%3Cpath d='M137 137 L663 663'/%3E%3Cpath d='M663 137 L137 663'/%3E%3Cpath d='M400 28 L663 137 L772 400 L663 663 L400 772 L137 663 L28 400 L137 137 Z'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+  transform: translate(-50%, -50%);
+  animation: gwRotate 90s linear infinite;
+  pointer-events: none;
+}
+@keyframes gwRotate {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.gw-hero h1 { position: relative; z-index: 1; font-weight: 900;
+  font-size: clamp(2rem, 6vw, 3.4rem); letter-spacing: .22em;
+  text-shadow: 0 0 50px rgba(212,175,55,.35); }
+.gw-hero-sub { position: relative; z-index: 1; margin-top: 1rem;
+  color: var(--text-muted, #A8A4D8); font-size: clamp(.92rem, 2.2vw, 1.06rem); }
+.gw-hero-btns { position: relative; z-index: 1; display: flex; gap: 1rem;
+  flex-wrap: wrap; justify-content: center; margin-top: 1.9rem; }
+#howto { scroll-margin-top: 84px; }
+@media (prefers-reduced-motion: reduce) { .gw-hero::before { animation: none; } }
+@media (max-width: 640px) {
+  .gw-hero { padding: 100px 1.2rem 34px; }
+  .gw-hero h1 { letter-spacing: .14em; }
+  .gw-hero-btns { gap: .6rem; }
+  .gw-hero-btns .btn-gold, .gw-hero-btns .btn-outline { padding: .7rem 1.5rem; }
+}
+
+/* ── 格子牆 ── */
+.gw-wrap { margin: 1.2rem 0 2rem; }
+.gw-legend { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin: .6rem 0 1rem;
+  font-size: .82rem; color: var(--text-muted, #A8A4D8); }
+.gw-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+.gw-dot { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+.gw-dot.open   { background: #F8F5EE; border: 1px dashed #D4AF37; }
+.gw-dot.taken  { background: #D4AF37; }
+.gw-dot.making { background: #7A1F2B; }
+.gw-dot.done   { background: #0F172A; border: 1px solid #D4AF37; }
+
+.gw-progress { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin: .4rem 0 1.2rem; }
+.gw-progress .num { font-family: "Noto Serif TC", serif; font-size: 1.6rem;
+  color: #D4AF37; line-height: 1.1; }
+.gw-progress .lbl { font-size: .78rem; color: var(--text-muted, #A8A4D8); }
+
+.gw-zone { margin: 1.6rem 0; }
+.gw-zone-head { display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid rgba(212,175,55,.25);
+  padding-bottom: .4rem; margin-bottom: .7rem; }
+.gw-zone-head h3 { margin: 0; font-family: "Noto Serif TC", serif; font-size: 1.05rem; }
+.gw-zone-head .meta { font-size: .82rem; color: var(--text-muted, #A8A4D8); }
+
+.gw-grid { display: grid; gap: 3px; }
+.gw-grid.g-main  { grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); }
+.gw-grid.g-mid   { grid-template-columns: repeat(auto-fill, minmax(30px, 1fr)); }
+.gw-grid.g-small { grid-template-columns: repeat(auto-fill, minmax(16px, 1fr)); }
+
+.gw-cell { aspect-ratio: 1 / 1; border: 0; padding: 0; cursor: pointer;
+  border-radius: 3px; font-size: .6rem; color: #0F172A;
+  background: #F8F5EE; border: 1px dashed rgba(212,175,55,.75);
+  transition: transform .12s ease, box-shadow .12s ease; }
+.gw-cell:hover { transform: scale(1.18); box-shadow: 0 0 0 2px #D4AF37; z-index: 2; position: relative; }
+.gw-cell[data-s="已認捐"] { background: #D4AF37; border: 1px solid #B8952B; cursor: default; }
+.gw-cell[data-s="製作中"] { background: #7A1F2B; border: 1px solid #5E1621; cursor: default; }
+.gw-cell[data-s="已完成"] { background: #0F172A; border: 1px solid #D4AF37; cursor: default; }
+.gw-cell.g-featured { outline: 1px solid rgba(212,175,55,.5); outline-offset: 1px; }
+
+/* ── 選位面板 ── */
+#gwPicker { display: none; position: fixed; inset: 0; z-index: 60;
+  background: rgba(15,23,42,.72); padding: 1rem; overflow-y: auto; }
+#gwPicker.on { display: block; }
+#gwPicker .box { max-width: 460px; margin: 4vh auto; background: #fff; color: #0F172A;
+  border-radius: .8rem; border-top: 4px solid #D4AF37; padding: 1.3rem 1.2rem 1.4rem; }
+#gwPicker h4 { margin: 0 0 .2rem; font-family: "Noto Serif TC", serif; font-size: 1.2rem; }
+#gwPicker .sid { font-size: .8rem; color: #6B7280; letter-spacing: .06em; }
+#gwPicker dl { display: grid; grid-template-columns: 5.5em 1fr; gap: .25rem .6rem;
+  margin: .9rem 0; font-size: .9rem; }
+#gwPicker dt { color: #6B7280; }
+#gwPicker dd { margin: 0; }
+#gwPicker .gw-note { margin: .1rem 0 .9rem; font-size: .86rem; color: #7A1F2B; }
+#gwPicker .close { margin-top: .6rem; }
+
+/* ── 分級表 ── */
+.gw-tier { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.gw-tier th, .gw-tier td { border-bottom: 1px solid rgba(212,175,55,.22);
+  padding: .55rem .5rem; text-align: left; }
+.gw-tier th { color: #D4AF37; font-weight: 700; }
+.gw-tier .cells { font-family: "Noto Serif TC", serif; color: #D4AF37; white-space: nowrap; }
+
+/* ── 表單 ── */
+.gw-form { max-width: 640px; }
+.gw-form .row { margin-bottom: .9rem; }
+.gw-form label { display: block; font-size: .88rem; color: #D4AF37; margin-bottom: .25rem; }
+.gw-form label .req { color: #7A1F2B; }
+.gw-form input[type=text], .gw-form input[type=email], .gw-form input[type=tel],
+.gw-form select, .gw-form textarea {
+  width: 100%; padding: .55rem .7rem; font-size: .95rem; font-family: inherit;
+  background: rgba(248,245,238,.06); color: #F8F5EE;
+  border: 1px solid rgba(212,175,55,.45); border-radius: .4rem; }
+.gw-form input:focus, .gw-form select:focus, .gw-form textarea:focus {
+  outline: 0; border-color: #D4AF37; background: rgba(248,245,238,.1); }
+.gw-form .hint { font-size: .78rem; color: var(--text-muted, #A8A4D8); margin-top: .25rem; }
+.gw-form .check { display: flex; gap: .55rem; align-items: flex-start; font-size: .88rem; }
+.gw-form .check input { margin-top: .35rem; }
+.gw-form .check label { color: inherit; margin: 0; }
+#gwMsg { margin-top: 1rem; padding: .8rem 1rem; border-radius: .5rem; font-size: .92rem; display: none; }
+#gwMsg.ok  { display: block; background: rgba(212,175,55,.14); border: 1px solid #D4AF37; color: #F8F5EE; }
+#gwMsg.err { display: block; background: rgba(122,31,43,.3); border: 1px solid #7A1F2B; color: #F8F5EE; }
+
+/* ── 名錄 ── */
+.gw-merit-bar { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.gw-merit-bar input, .gw-merit-bar select { padding: .45rem .6rem; font-size: .9rem;
+  background: rgba(248,245,238,.06); color: #F8F5EE;
+  border: 1px solid rgba(212,175,55,.45); border-radius: .4rem; }
+.gw-merit-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .45rem; }
+.gw-merit-item { background: rgba(248,245,238,.05); border: 1px solid rgba(212,175,55,.25);
+  border-radius: .4rem; padding: .5rem .6rem; font-size: .88rem; }
+.gw-merit-item .n { font-family: "Noto Serif TC", serif; color: #F8F5EE; }
+.gw-merit-item .s { font-size: .75rem; color: var(--text-muted, #A8A4D8); }
+
+@media (max-width: 640px) {
+  .gw-grid.g-main  { grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); }
+  .gw-grid.g-mid   { grid-template-columns: repeat(auto-fill, minmax(24px, 1fr)); }
+  .gw-grid.g-small { grid-template-columns: repeat(auto-fill, minmax(13px, 1fr)); }
+  .gw-progress .num { font-size: 1.35rem; }
+}

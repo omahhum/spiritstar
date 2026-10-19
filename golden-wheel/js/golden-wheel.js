@@ -240,19 +240,6 @@ const GW = (() => {
     if (preset && slotInput) { slotInput.value = preset; showSlot(preset); }
     if (slotInput) slotInput.addEventListener('input', e => showSlot(e.target.value.trim()));
 
-    // 若未帶 slot，提供下拉選單
-    const sel = document.getElementById('gwSlotSelect');
-    if (sel && d) {
-      sel.innerHTML = '<option value="">— 請選擇 —</option>' +
-        d.slots.filter(s => statusClass(s.status) === '可認捐').map(s =>
-          '<option value="' + s.id + '">' + s.id + '　' + s.name +
-          '　NT$' + Number(s.price).toLocaleString() + '</option>').join('');
-      sel.addEventListener('change', e => {
-        if (slotInput) slotInput.value = e.target.value;
-        showSlot(e.target.value);
-      });
-    }
-
     form.addEventListener('submit', async e => {
       e.preventDefault();
       const msg = document.getElementById('gwMsg');
@@ -284,7 +271,7 @@ const GW = (() => {
         msg.className = 'ok';
         msg.innerHTML = '認捐已登錄。<br>編號 <strong>' + r.id + '</strong>　' +
           r.name + '　NT$ ' + Number(r.price).toLocaleString() +
-          '<br>我們會以 Email 與您聯繫後續收款與收據事宜，並在神像製作完成時寄送實拍照片。';
+          '<br>為防止詐騙利用，請私訊香海師姊確認並索取帳號或其它付款方式。我們也會以 Email 與您聯繫付款與感謝函事宜，並在神像製作完成時寄送實拍照片。';
         form.reset();
         document.getElementById('gwSlotInfo').textContent = '';
       } catch (err) {

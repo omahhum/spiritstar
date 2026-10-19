@@ -27,24 +27,23 @@
   <section class="section">
     <h2 class="section-title fade-in">填寫認捐資料</h2>
     <p class="section-sub fade-in">
-      送出後我們會以 Email 與您聯繫收款與收據事宜。神像製作完成時，會寄送該尊的實拍照片給您。
+      送出後我們會以 Email 與您聯繫付款與感謝函事宜。神像製作完成時，會寄送該尊的實拍照片給您。
     </p>
 
     <div id="gwMsg"></div>
 
-    <form class="gw-form fade-in" id="gwForm" novalidate>
+    <div class="gw-warn fade-in">
+      <p>為防止詐騙利用，送出後請私訊香海師姊確認並索取帳號或其它付款方式。</p>
+      <p>私訊請至 <a href="https://www.facebook.com/lightwishsoul/" target="_blank" rel="noopener">光圻靈 FB 粉專</a></p>
+    </div>
 
-      <div class="row">
-        <label for="gwSlotSelect">選擇格位（可認捐的格位）</label>
-        <select id="gwSlotSelect"><option value="">載入中…</option></select>
-        <div class="hint">也可以直接從<a href="index.html">首頁格子牆</a>點選想認捐的那一格。</div>
-      </div>
+    <form class="gw-form fade-in" id="gwForm" novalidate>
 
       <div class="row">
         <label for="slot">格位編號 <span class="req">＊</span></label>
         <input type="text" id="slot" name="slot" inputmode="numeric" pattern="[0-9]{4}"
                placeholder="例如 0001" required>
-        <div class="hint" id="gwSlotInfo">請選擇或輸入四位數編號。</div>
+        <div class="hint" id="gwSlotInfo">可回<a href="index.html">格子牆</a>按該尊的「認捐此尊」自動帶入，或直接輸入四位數編號。</div>
       </div>
 
       <div class="row">
@@ -72,18 +71,20 @@
       </div>
 
       <div class="row">
-        <label for="phone">聯絡電話</label>
-        <input type="tel" id="phone" name="phone" autocomplete="tel">
+        <label for="phone">聯絡方式</label>
+        <input type="text" id="phone" name="phone" autocomplete="tel"
+               placeholder="例如：0912-345-678、LINE ID、FB 名稱">
+        <div class="hint">電話 / LINE / FB 等，任一可以聯絡到您的方式。</div>
       </div>
 
       <div class="row">
         <label for="address">收件地址</label>
         <textarea id="address" name="address" rows="2"
-                  placeholder="如需寄送光麒麟御守，請填寫收件地址"></textarea>
+                  placeholder="如需寄送光麒麟御守或感謝函，請填寫收件地址"></textarea>
       </div>
 
       <div class="row">
-        <label for="receipt">收據需求</label>
+        <label for="receipt">感謝函</label>
         <select id="receipt" name="receipt">
           <option value="不需要">不需要</option>
           <option value="需要">需要</option>
@@ -91,13 +92,8 @@
       </div>
 
       <div class="row">
-        <label for="receiptTitle">收據抬頭</label>
+        <label for="receiptTitle">感謝函抬頭</label>
         <input type="text" id="receiptTitle" name="receiptTitle">
-      </div>
-
-      <div class="row">
-        <label for="taxId">統一編號</label>
-        <input type="text" id="taxId" name="taxId" inputmode="numeric">
       </div>
 
       <div class="row">
@@ -125,6 +121,11 @@
         <a class="btn-outline" href="index.html" style="margin-left:.6rem;">回格子牆</a>
       </div>
     </form>
+
+    <div class="gw-warn gw-warn--after fade-in">
+      <p>為防止詐騙利用，送出後請私訊香海師姊確認並索取帳號或其它付款方式。</p>
+      <p>私訊請至 <a href="https://www.facebook.com/lightwishsoul/" target="_blank" rel="noopener">光圻靈 FB 粉專</a></p>
+    </div>
   </section>
 
   <div id="footer-placeholder"></div>

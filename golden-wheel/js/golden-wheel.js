@@ -5,6 +5,10 @@
  *   donate.html      → GW.initDonate()
  *   merit-list.html  → GW.initMerit()
  *
+ * 格子牆為「卡片 ＋ 分頁（tab）」：第一層分區，第二層群組；卡片直接顯示編號／尊名／
+ * 金額／群組，可認捐的卡片自帶「認捐此尊」按鈕，不再使用彈窗選位面板。
+ * （2026-10-19 依使用者指示改版，原小格＋彈窗設計見 00_網站架構與內容規劃.md §2 修訂註記。）
+ *
  * 部署前：把 GAS_URL 換成部署後的 /exec 網址。
  */
 
@@ -13,7 +17,12 @@ const CACHE_KEY = 'gw_slots_v1';
 const CACHE_MS = 10 * 60 * 1000;      // 10 分鐘
 
 const ZONES = ['主壇', '藥師壇', '百字明尊', '大壇'];
-const ZONE_GRID = { 主壇: 'g-main', 藥師壇: 'g-mid', 百字明尊: 'g-mid', 大壇: 'g-small' };
+
+/**
+ * 分區格數超過此數就不提供「全部」分頁，直接以群組細分。
+ * 大壇 529 格因此不會整坨出現；主壇 35／藥師壇 19／百字明尊 21 仍可切「全部」。
+ */
+const WHOLE_TAB_MAX = 60;
 
 const GW = (() => {
 
@@ -37,12 +46,18 @@ const GW = (() => {
   }
 
   const statusClass = s => (s || '可認捐').trim();
+  const money = v => 'NT$' + Number(v || 0).toLocaleString();
+  const esc = v => String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const counter = (num, lbl) =>
+    '<div><div class="num">' + num + '</div><div class="lbl">' + lbl + '</div></div>';
 
-  // ── 格子牆 ──────────────────────────────────────────
+  // ── 格子牆：分頁 ＋ 卡片 ─────────────────────────────
   async function initGrid() {
     const host = document.getElementById('gwGrid');
     if (!host) return;
     host.innerHTML = '<p class="text-muted">格位資料載入中…</p>';
+
     let d;
     try {
       d = await getSlots();
@@ -52,86 +67,144 @@ const GW = (() => {
       return;
     }
 
-    host.innerHTML = '';
-    ZONES.forEach(zone => {
-      const list = d.slots.filter(s => s.zone === zone);
-      if (!list.length) return;
-      const open = list.filter(s => statusClass(s.status) === '可認捐').length;
+    const slots = d.slots || [];
+    if (!slots.length) { host.innerHTML = '<p class="text-muted">目前沒有格位資料。</p>'; return; }
 
-      const box = document.createElement('div');
-      box.className = 'gw-zone';
-      box.innerHTML =
-        '<div class="gw-zone-head">' +
-        '<h3>' + zone + '</h3>' +
-        '<span class="meta">' + list.length + ' 格　·　可認捐 ' + open + ' 格　·　' +
-        Math.round((list.length - open) / list.length * 100) + '% 已認捐</span>' +
-        '</div>' +
-        '<div class="gw-grid ' + (ZONE_GRID[zone] || 'g-mid') + '"></div>';
-      const grid = box.querySelector('.gw-grid');
-      list.forEach(s => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'gw-cell';
-        b.dataset.s = statusClass(s.status);
-        b.dataset.id = s.id;
-        b.dataset.name = s.name;
-        b.dataset.price = s.price;
-        b.dataset.zone = s.zone;
-        b.title = s.id + '　' + s.name + '　NT$' + Number(s.price).toLocaleString();
-        b.addEventListener('click', () => pick(s));
-        grid.appendChild(b);
-      });
-      host.appendChild(box);
-    });
+    // 分區與群組順序：依試算表實際出現順序
+    const zoneOrder = ZONES.filter(z => slots.some(s => s.zone === z));
+    slots.forEach(s => { if (zoneOrder.indexOf(s.zone) < 0) zoneOrder.push(s.zone); });
+    const inZone = z => slots.filter(s => s.zone === z);
+    const groupsOf = z => {
+      const out = [];
+      slots.forEach(s => { if (s.zone === z && out.indexOf(s.group) < 0) out.push(s.group); });
+      return out;
+    };
+    const inGroup = (z, g) => slots.filter(s => s.zone === z && s.group === g);
 
+    // 總進度（全部 604 格）
     const bar = document.getElementById('gwProgress');
     if (bar) {
       const taken = d.total - d.open;
-      bar.innerHTML =
-        counter(taken, '已認捐格數') +
-        counter(d.open, '仍可認捐') +
-        counter(d.total, '總格數') +
-        counter((taken / d.total * 100).toFixed(1) + '%', '完成比例');
+      bar.innerHTML = counter(taken, '已認捐格數') + counter(d.open, '仍可認捐') +
+        counter(d.total, '總格數') + counter((taken / d.total * 100).toFixed(1) + '%', '完成比例');
     }
-  }
 
-  const counter = (num, lbl) =>
-    '<div><div class="num">' + num + '</div><div class="lbl">' + lbl + '</div></div>';
+    host.innerHTML =
+      '<div class="gw-tabs" id="gwZoneTabs"></div>' +
+      '<div class="gw-tabs gw-tabs-sub" id="gwGroupTabs"></div>' +
+      '<input type="search" id="gwFilter" class="gw-filter" placeholder="搜尋編號或尊名（例如 0604、太歲、柏鑑）">' +
+      '<p class="gw-tab-summary" id="gwSummary"></p>' +
+      '<div class="gw-cards" id="gwCards"></div>';
 
-  // ── 選位面板 ────────────────────────────────────────
-  let current = null;
+    const zoneTabs = document.getElementById('gwZoneTabs');
+    const groupTabs = document.getElementById('gwGroupTabs');
+    const filterEl = document.getElementById('gwFilter');
+    const summary = document.getElementById('gwSummary');
+    const cardsHost = document.getElementById('gwCards');
 
-  function pick(s) {
-    current = s;
-    const isOpen = statusClass(s.status) === '可認捐';
-    const p = document.getElementById('gwPicker');
-    if (!p) { if (isOpen) goDonate(s.id); return; }
-    p.querySelector('h4').textContent = s.name;
-    p.querySelector('.sid').textContent = '編號 ' + s.id + '　·　' + s.zone;
-    p.querySelector('dd.price').textContent = 'NT$ ' + Number(s.price).toLocaleString();
-    p.querySelector('dd.status').textContent = s.status;
-    p.querySelector('dd.group').textContent = s.group || '　';
-    const btn = p.querySelector('a.go');
-    btn.href = 'donate.html?slot=' + encodeURIComponent(s.id);
-    btn.style.display = isOpen ? '' : 'none';
-    const note = p.querySelector('.gw-note');
-    if (note) {
-      note.style.display = isOpen ? 'none' : 'block';
-      note.textContent = isOpen ? '' : '這一格已經被認捐了，可以回格子牆另選一格。';
+    let curZone = zoneOrder[0];
+    let curGroup = defaultGroup(curZone);
+    let curKw = '';
+
+    /** 太大就不給「全部」，預設落在第一個群組 */
+    function defaultGroup(z) {
+      return inZone(z).length <= WHOLE_TAB_MAX ? null : (groupsOf(z)[0] || null);
     }
-    p.classList.add('on');
-  }
 
-  function initPicker() {
-    const p = document.getElementById('gwPicker');
-    if (!p) return;
-    p.addEventListener('click', e => { if (e.target === p) p.classList.remove('on'); });
-    const c = p.querySelector('.close');
-    if (c) c.addEventListener('click', () => p.classList.remove('on'));
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') p.classList.remove('on'); });
-  }
+    function listNow() {
+      const k = curKw.trim();
+      return slots.filter(s => s.zone === curZone && (!curGroup || s.group === curGroup) &&
+        (!k || s.id.indexOf(k) >= 0 || (s.name || '').indexOf(k) >= 0 || (s.group || '').indexOf(k) >= 0));
+    }
 
-  const goDonate = id => { location.href = 'donate.html?slot=' + encodeURIComponent(id); };
+    /** 換分頁就把搜尋字清掉，避免換過去看到一片空白 */
+    function resetKeyword() {
+      curKw = '';
+      if (filterEl) filterEl.value = '';
+    }
+
+    function renderTabs() {
+      zoneTabs.innerHTML = zoneOrder.map(z =>
+        '<button type="button" class="gw-tab' + (z === curZone ? ' on' : '') +
+        '" data-zone="' + esc(z) + '">' + esc(z) +
+        '<span class="n">' + inZone(z).length + '</span></button>').join('');
+
+      const chips = [];
+      if (inZone(curZone).length <= WHOLE_TAB_MAX) {
+        chips.push({ g: '', label: '全部', n: inZone(curZone).length });
+      }
+      const gs = groupsOf(curZone);
+      if (gs.length > 1) {
+        gs.forEach(g => chips.push({ g: g, label: g, n: inGroup(curZone, g).length }));
+      }
+      groupTabs.style.display = chips.length > 1 ? '' : 'none';
+      groupTabs.innerHTML = chips.map(c => {
+        const on = (c.g === '' && !curGroup) || (c.g !== '' && c.g === curGroup);
+        return '<button type="button" class="gw-tab gw-tab-sm' + (on ? ' on' : '') +
+          '" data-group="' + esc(c.g) + '">' + esc(c.label) +
+          '<span class="n">' + c.n + '</span></button>';
+      }).join('');
+    }
+
+    function renderCards() {
+      const list = listNow();
+      const cnt = st => list.filter(s => statusClass(s.status) === st).length;
+      const open = cnt('可認捐'), making = cnt('製作中'), done = cnt('已完成');
+      const k = curKw.trim();
+      summary.textContent =
+        (k ? '搜尋「' + k + '」· ' : '') +
+        (curGroup ? curZone + ' · ' + curGroup : curZone) + '　共 ' + list.length + ' 格' +
+        '　可認捐 ' + open + '　已認捐 ' + (list.length - open - making - done) +
+        '　製作中 ' + making + '　已完成 ' + done;
+
+      if (!list.length) {
+        cardsHost.innerHTML = '<p class="text-muted">沒有符合的格位。可換一個關鍵字（編號或尊名），或換分頁。</p>';
+        return;
+      }
+
+      cardsHost.innerHTML = list.map(s => {
+        const st = statusClass(s.status);
+        const openSlot = st === '可認捐';
+        return '<article class="gw-card" data-s="' + esc(st) + '" data-id="' + esc(s.id) + '">' +
+          '<div class="gw-card-top"><span class="gw-card-id">' + esc(s.id) + '</span>' +
+          '<span class="gw-card-price">' + money(s.price) + '</span></div>' +
+          '<h4 class="gw-card-name">' + esc(s.name || '（待補）') + '</h4>' +
+          '<div class="gw-card-meta">' + esc(s.zone) + ' · ' + esc(s.group) +
+          (s.level ? ' · ' + esc(s.level) + ' 級' : '') + '</div>' +
+          '<div class="gw-card-foot">' + (openSlot
+            ? '<a class="gw-card-btn" href="donate.html?slot=' + encodeURIComponent(s.id) + '">認捐此尊</a>'
+            : '<span class="gw-card-state">' + esc(st) + '</span>') +
+          '</div></article>';
+      }).join('');
+    }
+
+    zoneTabs.addEventListener('click', e => {
+      const b = e.target.closest('.gw-tab');
+      if (!b || !b.dataset.zone) return;
+      curZone = b.dataset.zone;
+      curGroup = defaultGroup(curZone);
+      resetKeyword();
+      renderTabs(); renderCards();
+    });
+
+    groupTabs.addEventListener('click', e => {
+      const b = e.target.closest('.gw-tab');
+      if (!b) return;
+      curGroup = b.dataset.group || null;
+      resetKeyword();
+      renderTabs(); renderCards();
+    });
+
+    if (filterEl) {
+      filterEl.addEventListener('input', e => {
+        curKw = e.target.value || '';
+        renderCards();
+      });
+    }
+
+    renderTabs();
+    renderCards();
+  }
 
   // ── 認捐表單 ────────────────────────────────────────
   async function initDonate() {
@@ -281,12 +354,11 @@ const GW = (() => {
   // ── 啟動 ────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     initFadeIn();
-    initPicker();
     const page = document.body.dataset.gwPage;
     if (page === 'index') initGrid();
     if (page === 'donate') initDonate();
     if (page === 'merit') initMerit();
   });
 
-  return { getSlots, initGrid, initDonate, initMerit, pick };
+  return { getSlots, initGrid, initDonate, initMerit };
 })();

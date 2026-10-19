@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>功德芳名錄 — 佛頂金輪大壇 — 聖輪宗</title>
+  <meta name="description" content="佛頂金輪大壇建壇功德芳名錄。認捐功德主姓名登錄。">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/golden-wheel.css">
+  <style>
+    .page-header { padding-top: 100px; padding-bottom: 50px; text-align: center;
+      background: radial-gradient(ellipse at 50% 0%, #1a2744 0%, #0F172A 70%); }
+    .page-header h1 { font-size: clamp(1.7rem, 4.5vw, 2.8rem); }
+    .page-header p { color: var(--text-muted); margin-top: .8rem; }
+  </style>
+</head>
+<body data-base="../" data-gw-page="merit">
+
+  <nav id="top-nav"></nav>
+
+  <header class="page-header">
+    <h1>功德芳名錄</h1>
+    <p>佛頂金輪大壇 建壇功德</p>
+  </header>
+
+  <section class="section">
+    <h2 class="section-title fade-in">認捐功德主</h2>
+    <p class="section-sub fade-in">
+      此為官網電子名錄，永久留存。共修中心另以掛軸或裱框大圖存放，法會時懸掛。
+      名錄可重印、可增補。
+    </p>
+    <p class="fade-in text-muted" style="font-size:.86rem;">
+      僅列同意公開姓名者。壇城造像與裝藏內容一律為經咒，不裝入姓名，不於佛像本體刻名。
+    </p>
+
+    <div class="gw-merit-bar fade-in">
+      <input type="text" id="gwMeritKw" placeholder="搜尋姓名或尊名">
+      <select id="gwMeritZone">
+        <option value="">全部分區</option>
+        <option value="主壇">主壇</option>
+        <option value="藥師壇">藥師壇</option>
+        <option value="百字明尊">百字明尊</option>
+        <option value="大壇">大壇</option>
+      </select>
+      <span class="text-muted" id="gwMeritCount" style="align-self:center;font-size:.84rem;"></span>
+    </div>
+
+    <div id="gwMerit"></div>
+
+    <p style="margin-top:1.6rem;">
+      <a class="btn-gold" href="index.html">回格子牆</a>
+      <a class="btn-outline" href="donate.html" style="margin-left:.6rem;">我要認捐</a>
+    </p>
+  </section>
+
+  <div id="footer-placeholder"></div>
+  <script src="../js/top-menu.js"></script>
+  <script src="../js/footer.js"></script>
+  <script src="js/golden-wheel.js"></script>
+</body>
+</html>

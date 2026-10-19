@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>佛頂金輪大壇 建壇功德 — 聖輪宗</title>
+  <meta name="description" content="佛頂金輪大壇建壇募資。604 個位置，每一個位置都登錄一個名字。以眾生力、辦眾生事，給予大眾造佛像、造壇城的功德機緣。">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/golden-wheel.css">
+  <style>
+    blockquote { border-left: 3px solid var(--gold); padding-left: 1.5rem;
+      color: var(--text-muted); margin: 1.6rem 0; }
+    .gw-lead { font-family: "Noto Serif TC", serif; font-size: 1.12rem; line-height: 2; }
+    .gw-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    .gw-table th, .gw-table td { border-bottom: 1px solid rgba(212,175,55,.22);
+      padding: .55rem .5rem; text-align: left; }
+    .gw-table th { color: var(--gold); }
+  </style>
+</head>
+<body data-base="../" data-gw-page="index">
+
+  <!-- Navigation -->
+  <nav id="top-nav"></nav>
+
+  <!-- 0. 首屏主視覺 -->
+  <header class="gw-hero">
+    <h1>佛頂金輪大壇</h1>
+    <p class="gw-hero-sub">建壇功德 · 604 個位置，每一個位置都登錄一個名字</p>
+    <p class="gw-hero-btns">
+      <a class="btn-gold" href="donate.html">我要認捐</a>
+      <a class="btn-outline" href="#howto">先看看怎麼認</a>
+    </p>
+  </header>
+
+  <!-- 1. 格子牆 -->
+  <section class="section">
+    <h2 class="section-title fade-in">目前進度</h2>
+    <p class="section-sub fade-in">每一格，對應壇城上的一尊。空格仍可認捐，點選格子可看該尊名號。</p>
+
+    <div class="gw-progress" id="gwProgress"></div>
+
+    <div class="gw-legend">
+      <span><i class="gw-dot open"></i>可認捐</span>
+      <span><i class="gw-dot taken"></i>已認捐</span>
+      <span><i class="gw-dot making"></i>製作中</span>
+      <span><i class="gw-dot done"></i>已完成</span>
+    </div>
+
+    <div class="gw-wrap" id="gwGrid"></div>
+
+    <p class="gw-lead fade-in">
+      這是聖輪宗金輪法脈的壇城。604 個位置，每一個都可以被認捐。認下的位置會做成神像，
+      平時安奉於三層壇，法會時請下來擺成曼陀羅大陣。
+    </p>
+
+    <p style="margin-top:1.4rem;">
+      <a class="btn-gold" href="donate.html">我要認捐</a>
+      <a class="btn-outline" href="#howto" style="margin-left:.6rem;">先看看怎麼認</a>
+    </p>
+  </section>
+
+  <!-- 選位面板 -->
+  <div id="gwPicker">
+    <div class="box">
+      <h4>　</h4>
+      <div class="sid"></div>
+      <dl>
+        <dt>認捐金額</dt><dd class="price"></dd>
+        <dt>目前狀態</dt><dd class="status"></dd>
+        <dt>所屬群組</dt><dd class="group"></dd>
+      </dl>
+      <p class="gw-note" style="display:none;"></p>
+      <a class="btn-gold go" href="donate.html">我要認捐這一格</a>
+      <button type="button" class="btn-outline close">關閉</button>
+    </div>
+  </div>
+
+  <!-- 2. 緣起 -->
+  <section class="section">
+    <h2 class="section-title fade-in">緣起</h2>
+    <p class="fade-in">民國一百一十五年（2026）十月十六日，得毘沙門天王傳靈訊，應以募資方式籌辦「佛頂金輪大壇」。</p>
+    <p class="fade-in">此事有兩個原則：</p>
+    <p class="fade-in" style="padding-left:1rem;">一、以眾生力、辦眾生事。</p>
+    <p class="fade-in" style="padding-left:1rem;">二、給予大眾造佛像、造壇城的功德機緣。</p>
+    <p class="fade-in">一座壇城通常是少數人的力量完成的。這座壇城，是 604 個人的力量一起完成的。</p>
+  </section>
+
+  <!-- 3. 誰在做 -->
+  <section class="section">
+    <h2 class="section-title fade-in">誰在做、憑什麼信</h2>
+    <p class="fade-in">主辦：聖輪宗（SriCakra）。</p>
+    <p class="fade-in">
+      聖輪宗自 2013 年起推動「全台安置十萬佛塔」，十餘年間已安置超過十萬座佛塔，足跡遍及全台鄉鎮市區。
+      製作批次與安置狀況皆不定期公開。這條線仍在進行中。
+    </p>
+    <blockquote>
+      《金輪懺法》中明載：「金輪法的前行，即是佛塔法。」<br>
+      十萬佛塔是前行，金輪大壇是正行。十餘年的佛塔已鋪在前，這座壇城是同一條法脈的下一步。
+    </blockquote>
+  </section>
+
+  <!-- 4. 這是什麼 -->
+  <section class="section">
+    <h2 class="section-title fade-in">這是什麼</h2>
+    <p class="fade-in">
+      佛頂金輪大壇以<strong>十輪王佛（十金輪）</strong>為中心，主壇中央為<strong>熾盛光佛</strong>，
+      是玄天星辰法陣的主尊、一切星辰之主。熾盛光佛統理一切星辰宿曜、流年值星、天干地支方位，
+      也就是統理一切眾生的命運；其咒以「消災吉祥」為名。
+    </p>
+    <p class="fade-in">壇城合為四區，共 604 尊：</p>
+    <table class="gw-table fade-in">
+      <thead><tr><th>分區</th><th>內容</th><th>尊數</th></tr></thead>
+      <tbody>
+        <tr><td>主壇</td><td>十輪王佛 10、8 菩薩＋8 明王 16、9 曜 9</td><td>35</td></tr>
+        <tr><td>藥師壇</td><td>7 星藥師佛 7、12 神將 12</td><td>19</td></tr>
+        <tr><td>百字明尊</td><td>金剛薩埵 1、四攝天女 4、八吉祥天女 8、八供養天女 8</td><td>21</td></tr>
+        <tr><td>大壇</td><td>28 部眾 28、值星護法 36、星宿護法 40、周天護法 425</td><td>529</td></tr>
+        <tr><th>合計</th><th></th><th>604</th></tr>
+      </tbody>
+    </table>
+    <p class="fade-in" style="margin-top:1rem;">
+      平時安奉於三層結構壇，法會時依陣圖請下來擺成曼陀羅大陣，法會圓滿後再請回三層壇。
+    </p>
+  </section>
+
+  <!-- 5. 怎麼認 -->
+  <section class="section" id="howto">
+    <h2 class="section-title fade-in">怎麼認</h2>
+    <table class="gw-tier fade-in">
+      <thead><tr><th>認捐金額</th><th>格數</th><th>認捐標的</th></tr></thead>
+      <tbody>
+        <tr><td>20,000</td><td class="cells">10 格</td><td>主壇 本尊 十輪王佛</td></tr>
+        <tr><td>10,000</td><td class="cells">24 格</td><td>主壇 副尊（8 菩薩＋8 明王）、7 星藥師佛、金剛薩埵</td></tr>
+        <tr><td>5,000</td><td class="cells">49 格</td><td>9 曜、12 神將、28 部眾</td></tr>
+        <tr><td>2,000</td><td class="cells">56 格</td><td>四攝天女、八吉祥天女、八供養天女、值星護法</td></tr>
+        <tr><td>1,500</td><td class="cells">40 格</td><td>12 宮、28 星宿</td></tr>
+        <tr><td>1,000</td><td class="cells">425 格</td><td>365 清福正神、60 太歲</td></tr>
+      </tbody>
+    </table>
+    <p class="fade-in" style="margin-top:1rem;">
+      <strong>可以指定。</strong>
+      你可以認自己的本命太歲（依出生年對應六十甲子），也可以認與自己生肖、行業或所求之事相應的正神。
+      不指定也可以，由主辦方安排。
+    </p>
+    <p class="fade-in">
+      <a class="btn-gold" href="donate.html">我要認捐</a>
+    </p>
+  </section>
+
+  <!-- 6. 回饋 -->
+  <section class="section">
+    <h2 class="section-title fade-in">認捐之後</h2>
+    <p class="section-sub fade-in">認捐之後，你的名字仍然會被看見。</p>
+    <table class="gw-table fade-in">
+      <thead><tr><th>項目</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>功德芳名錄</strong></td><td>姓名登錄於功德芳名錄（掛軸／裱框大圖）與官網電子名錄</td></tr>
+        <tr><td>光麒麟壓克力御守</td><td>正面圖、背面咒</td></tr>
+        <tr><td>供香、供酒</td><td>法會供養</td></tr>
+        <tr><td>吉祥燈供</td><td>法會燈供</td></tr>
+        <tr><td>長生祿位</td><td>法會祿位</td></tr>
+        <tr><td>個人專法</td><td>依認捐級別 1 至 5 次</td></tr>
+      </tbody>
+    </table>
+    <p class="fade-in" style="margin-top:1rem;">
+      依認捐級別不同，回饋項目略有差異，詳見認捐表單所列。
+      <a href="merit-list.html">查看功德芳名錄</a>
+    </p>
+  </section>
+
+  <!-- 7. 名字會在哪（界線） -->
+  <section class="section">
+    <h2 class="section-title fade-in">我的名字會在哪</h2>
+    <p class="fade-in">
+      功德主姓名登錄於<strong>功德芳名錄</strong>（共修中心以掛軸或裱框大圖存放，法會時懸掛）
+      與<strong>官網電子名錄</strong>。
+    </p>
+    <p class="fade-in">名錄可重印、可增補，官網電子名錄永久留存。</p>
+    <p class="fade-in">
+      壇城造像與裝藏內容一律為經咒（如百字明、法身偈），<strong>不裝入姓名，不於佛像本體刻名</strong>。
+    </p>
+    <blockquote>
+      認捐是隨喜造像、成就道場的功德行為，取得的是功德與回饋項目的參加資格，
+      不是任何一尊造像的所有權、處分權或搬遷權。壇城建成後，所有造像屬道場所有。
+    </blockquote>
+  </section>
+
+  <!-- 8. 錢怎麼用 -->
+  <section class="section">
+    <h2 class="section-title fade-in">錢怎麼用</h2>
+    <p class="fade-in">
+      建壇募資金額總計新台幣 1,282,000 元，其中包含造像製作成本。
+    </p>
+    <p class="fade-in">
+      實際製作費約為募資金額的三分之一至五分之一，其餘用於設計、打樣、運輸、安裝、壇城結構、
+      法會、功德芳名錄製作、金流與行政等項目。
+    </p>
+    <p class="fade-in">收支與製作進度不定期公開。這不是新作法，十萬佛塔十餘年來一直如此。</p>
+  </section>
+
+  <!-- 9. 時程 -->
+  <section class="section">
+    <h2 class="section-title fade-in">什麼時候看到成品</h2>
+    <p class="fade-in"><strong>一有指定捐款入項，就會立刻訂製該尊神像。</strong></p>
+    <p class="fade-in">
+      所以完成的進度，取決於認捐的速度，不是取決於排定的日期。
+      我們以民國一百一十六年（2027）年底前落成為目標，但無法保證確切日期。
+    </p>
+    <p class="fade-in">我們對外說明的會是：目前已經完成了多少尊。</p>
+  </section>
+
+  <!-- 10. 通知 -->
+  <section class="section">
+    <h2 class="section-title fade-in">認捐後會收到什麼</h2>
+    <table class="gw-table fade-in">
+      <thead><tr><th>時機</th><th>通知內容</th></tr></thead>
+      <tbody>
+        <tr><td>認捐完成</td><td>認捐編號、尊別名稱、金額、回饋內容、收據</td></tr>
+        <tr><td><strong>神像製作完成</strong></td><td><strong>該尊神像實拍照片</strong></td></tr>
+        <tr><td>安奉完成</td><td>該尊安奉於三層壇的位置</td></tr>
+        <tr><td>每年法會</td><td>該尊於年度法會迴向的資訊</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 11. FAQ -->
+  <section class="section">
+    <h2 class="section-title fade-in">常見問題</h2>
+
+    <h3 class="fade-in">壇城裡為什麼有星辰、太歲這些道教名相？</h3>
+    <p class="fade-in">
+      依《玄天星辰懺法》所載，法陣主尊熾盛光佛統理一切星辰宿曜，衍生的時光空間、流年值星、
+      天干地支方位，自然也在掌管範圍內，也就是統理一切眾生的命運。因此星辰宿曜與周天諸神，
+      是熾盛光佛所統理的眷屬，列於壇城的外圈，是主與從的配置。
+    </p>
+    <p class="fade-in">
+      本宗一向不作大小法之分。八萬四千法門，法法皆真；眾生根器不同，佛菩薩便以各種不同的方式隨緣教化。
+    </p>
+    <p class="fade-in">
+      另需說明：北極玄天上帝是道教民俗信仰中，由玄武星宿漸漸過渡為北極眾生之首，
+      與紫薇帝君的地位與星權重疊。此為道教民俗演變，非佛教之問題。
+      本宗另有菩薩尊對應紫微、忿怒尊對應玄天上帝之分。<strong>這些名相不在本次壇城之內</strong>，僅於此說明。
+    </p>
+
+    <h3 class="fade-in">我已經在安光明燈、安太歲，還需要認捐嗎？</h3>
+    <p class="fade-in">
+      兩者不衝突，但你會發現一件事。
+    </p>
+    <p class="fade-in">
+      佛典中護持佛塔的，是「四大天王與諸眷屬晝夜衛護，二十八部大藥叉將，日月五星，
+      幢雲彗星，晝夜護持」。而本宗過去的說明是：安佛塔的功德效驗，本來就比安光明燈或安太歲來得強大，
+      完全可以取代光明燈或安太歲。
+    </p>
+    <p class="fade-in">
+      這座壇城的周天護法區，正是二十八部眾、日月五星、十二宮二十八星宿、周天正神與六十太歲。
+      也就是說，<strong>壇城一次安置，不必年年安太歲</strong>。
+    </p>
+
+    <h3 class="fade-in">這是募款嗎？</h3>
+    <p class="fade-in">
+      這是由聖輪宗主辦的建壇募資，捐款用於造像與建壇。聖輪宗為佛教修持團體，
+      本活動之收款與收據依既有機制辦理。
+    </p>
+    <p class="fade-in">認捐為布施，回饋為結緣。</p>
+  </section>
+
+  <!-- 12. 尾 CTA -->
+  <section class="section" style="text-align:center;">
+    <h2 class="section-title fade-in" style="border:none;">604 個位置，你只需要一格</h2>
+    <p style="margin-top:1.2rem;"><a class="btn-gold" href="donate.html">我要認捐</a></p>
+  </section>
+
+  <!-- Footer -->
+  <div id="footer-placeholder"></div>
+  <script src="../js/top-menu.js"></script>
+  <script src="../js/footer.js"></script>
+  <script src="js/golden-wheel.js"></script>
+</body>
+</html>

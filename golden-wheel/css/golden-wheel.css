@@ -101,6 +101,25 @@
 .gw-tier th { color: #D4AF37; font-weight: 700; }
 .gw-tier .cells { font-family: "Noto Serif TC", serif; color: #D4AF37; white-space: nowrap; }
 
+/* ── 分級回饋對照表（工作表的完整分級＋回饋矩陣） ── */
+.gw-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.gw-tier--matrix { min-width: 720px; }
+.gw-tier--matrix th, .gw-tier--matrix td { text-align: center; padding: .5rem .45rem; }
+.gw-tier--matrix thead th { white-space: nowrap; font-size: .84rem; }
+.gw-tier--matrix th:nth-child(3), .gw-tier--matrix td:nth-child(3) { text-align: left; }
+.gw-tier--matrix td.price { font-family: "Noto Serif TC", serif; color: #D4AF37;
+  font-weight: 700; white-space: nowrap; vertical-align: middle; }
+.gw-tier--matrix td.yes { color: #D4AF37; font-weight: 700; white-space: nowrap; }
+.gw-tier--matrix td.no { color: rgba(168,164,216,.4); }
+.gw-tier--matrix tfoot td { border-bottom: none; border-top: 1px solid rgba(212,175,55,.5);
+  color: #D4AF37; font-size: .86rem; text-align: left; }
+.gw-tier-legend { font-size: .8rem; color: var(--text-muted, #A8A4D8);
+  line-height: 1.9; margin: .2rem 0 1rem; }
+/* 窄螢幕時對照表需左右滑動，給一個提示（桌機不顯示） */
+.gw-scroll-hint { display: none; font-size: .78rem; color: var(--text-muted, #A8A4D8);
+  text-align: center; letter-spacing: .1em; margin: .35rem 0 .7rem; }
+@media (max-width: 640px) { .gw-scroll-hint { display: block; } }
+
 /* ── 表單 ── */
 .gw-form { max-width: 640px; }
 .gw-form .row { margin-bottom: .9rem; }

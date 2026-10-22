@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .page-header { padding-top:100px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
+    .page-header { padding-top:112px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
   </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -31,22 +31,22 @@
     <div class="card fade-in">
       <h3 class="card-title">Facebook 專頁</h3>
       <p class="card-text">追蹤我們的 Facebook 專頁，獲取最新活動資訊、法會公告與修行文章。</p>
-      <a href="https://www.facebook.com/SpiritstarHolychakra" target="_blank" class="btn-outline" style="display:inline-block;margin-top:1rem;padding:.5rem 1.5rem;font-size:.85rem;">前往 Facebook</a>
+      <a href="https://www.facebook.com/SpiritstarHolychakra" target="_blank" class="btn-outline" style="display:inline-block;margin-top:1rem;padding:.7rem 1.6rem;font-size:var(--fs-base);">前往 Facebook</a>
     </div>
     <div class="card fade-in">
       <h3 class="card-title">LINE 社群</h3>
       <p class="card-text">加入聖輪宗 LINE 社群，與師兄姐交流修行心得，接收即時訊息。</p>
-      <a href="#" class="btn-outline" style="display:inline-block;margin-top:1rem;padding:.5rem 1.5rem;font-size:.85rem;">加入 LINE 社群</a>
+      <a href="#" class="btn-outline" style="display:inline-block;margin-top:1rem;padding:.7rem 1.6rem;font-size:var(--fs-base);">加入 LINE 社群</a>
     </div>
     <div class="card fade-in">
       <h3 class="card-title">光圓靈服務專頁</h3>
       <p class="card-text">光圓靈相關服務、活動報名與個案服務窗口。</p>
-      <a href="#" class="btn-outline" style="display:inline-block;margin-top:1rem;padding:.5rem 1.5rem;font-size:.85rem;">前往光圓靈</a>
+      <a href="#" class="btn-outline" style="display:inline-block;margin-top:1rem;padding:.7rem 1.6rem;font-size:var(--fs-base);">前往光圓靈</a>
     </div>
     <div class="card fade-in">
       <h3 class="card-title">台灣星靈神念學會</h3>
       <p class="card-text">學術研究、身心靈教育推廣與相關活動資訊。</p>
-      <a href="#" class="btn-outline" style="display:inline-block;margin-top:1rem;padding:.5rem 1.5rem;font-size:.85rem;">前往學會網站</a>
+      <a href="#" class="btn-outline" style="display:inline-block;margin-top:1rem;padding:.7rem 1.6rem;font-size:var(--fs-base);">前往學會網站</a>
     </div>
   </div>
 </section>
@@ -80,12 +80,12 @@
     <div class="card fade-in">
       <h3 class="card-title">神念修行討論社團</h3>
       <p class="card-text">專門討論神念功法、靜心方法、修行心得的封閉社團，歡迎已皈依弟子加入交流。</p>
-      <a href="#" class="btn-gold" style="display:inline-block;margin-top:1rem;padding:.5rem 1.5rem;font-size:.85rem;">申請加入</a>
+      <a href="#" class="btn-gold" style="display:inline-block;margin-top:1rem;padding:.7rem 1.6rem;font-size:var(--fs-base);">申請加入</a>
     </div>
     <div class="card fade-in">
       <h3 class="card-title">皈依共修祈福學習社團</h3>
       <p class="card-text">皈依弟子專屬社團，共享修行資源、交流學習心得、公告共修與法會資訊。</p>
-      <a href="#" class="btn-gold" style="display:inline-block;margin-top:1rem;padding:.5rem 1.5rem;font-size:.85rem;">申請加入</a>
+      <a href="#" class="btn-gold" style="display:inline-block;margin-top:1rem;padding:.7rem 1.6rem;font-size:var(--fs-base);">申請加入</a>
     </div>
   </div>
 </section>
@@ -114,14 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
           const name = user.displayName || (user.email ? user.email.split('@')[0] : '會員');
           li.innerHTML =
-            `<span style="color:var(--gold);font-size:.85rem;">${name}</span>` +
-            `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-            `<a href="member.html" style="font-size:.85rem;">會員專區</a>` +
-            `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-            `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
+            `<span style="color:var(--gold);font-size:var(--fs-sm);">${name}</span>` +
+            `<span style="color:var(--text-muted);margin:0 .4rem;">|</span>` +
+            `<a href="member.html" style="font-size:var(--fs-sm);">會員專區</a>` +
+            `<span style="color:var(--text-muted);margin:0 .4rem;">|</span>` +
+            `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:var(--fs-sm);">登出</a>`;
         } else {
           li.innerHTML =
-            `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
+            `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:var(--fs-sm);">Gmail 登入</a>`;
         }
         nav.appendChild(li);
       });

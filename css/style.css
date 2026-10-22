@@ -3,7 +3,7 @@
    ============================================ */
 
 /* Google Fonts — @import 必須放在最前面 */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap');
 
 :root {
   --midnight: #0F172A;
@@ -15,25 +15,50 @@
   --burgundy: #7A1F2B;
   --text-primary: #F8F5EE;
   --text-muted: #A8A4D8;
+
+  /* ── 字級尺度（老花眼／低視力友善）─────────────────────────────
+     基準：html font-size 106.25%（16px → 17px）
+       --fs-xs   ≈15.6px  最小字級下限：標籤／圖說／表格註／meta
+       --fs-sm   ≈16.7px  次要說明／表單標籤／頁尾連結
+       --fs-base ≈17.9px  正文基準（內文、卡片內文）
+       --fs-md   ≈20.4px  卡片標題／小標
+     全站任何地方都不得再出現小於 --fs-xs 的字。 */
+  --fs-xs: .92rem;
+  --fs-sm: .98rem;
+  --fs-base: 1.05rem;
+  --fs-md: 1.2rem;
+  --fs-lg: 1.35rem;
+  --fs-xl: 1.6rem;
+  --line: 1.9;   /* 內文行高：中文字距緊，行距要鬆才好讀 */
+  --tap: 44px;   /* 最小可點擊尺寸（手抖／觸控） */
 }
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* 老花眼／低視力友善：基準字級 16px → 17px（+6.25%）。
+     用百分比而非固定 px，才能沿用使用者自己在瀏覽器調大的字級。 */
+  font-size: 106.25%;
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
   background-color: var(--midnight);
   color: var(--ivory);
   font-family: 'Noto Sans TC', sans-serif;
-  font-weight: 300;
-  line-height: 1.8;
+  /* 300 細字在深底上會「發暈」，老花眼最難聚焦 → 一律 400 起 */
+  font-weight: 400;
+  font-size: var(--fs-base);
+  line-height: var(--line);
+  letter-spacing: .02em;   /* 中文字加一點字距，筆畫不易黏在一起 */
 }
 
 h1, h2, h3, h4 {
   font-family: 'Noto Serif TC', serif;
   font-weight: 700;
   color: var(--gold);
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 a { text-decoration: none; color: inherit; transition: all .3s; }
@@ -74,8 +99,8 @@ a:hover { color: var(--gold-soft); }
 }
 
 .hero-sub {
-  font-size: clamp(1rem, 2.5vw, 1.4rem);
-  letter-spacing: .5em;
+  font-size: clamp(1.05rem, 2.5vw, 1.5rem);
+  letter-spacing: .45em;
   color: var(--gold-soft);
   margin-top: 1.5rem;
   font-weight: 400;
@@ -84,10 +109,10 @@ a:hover { color: var(--gold-soft); }
 }
 
 .hero-tagline {
-  font-size: 1rem;
+  font-size: var(--fs-base);
   color: var(--text-muted);
   margin-top: 2rem;
-  max-width: 560px;
+  max-width: 620px;
   line-height: 2;
   position: relative;
   z-index: 1;
@@ -102,11 +127,15 @@ a:hover { color: var(--gold-soft); }
 }
 
 .btn-gold {
-  padding: .8rem 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .9rem 2.4rem;
+  min-height: var(--tap);
   border: 1px solid var(--gold);
   color: var(--gold);
-  font-size: .95rem;
-  letter-spacing: .15em;
+  font-size: var(--fs-base);
+  letter-spacing: .12em;
   transition: all .3s;
   position: relative;
   overflow: hidden;
@@ -124,11 +153,15 @@ a:hover { color: var(--gold-soft); }
 .btn-gold:hover { color: var(--midnight); }
 
 .btn-outline {
-  padding: .8rem 2.5rem;
-  border: 1px solid rgba(248,245,238,.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .9rem 2.4rem;
+  min-height: var(--tap);
+  border: 1px solid rgba(248,245,238,.5);
   color: var(--ivory);
-  font-size: .95rem;
-  letter-spacing: .15em;
+  font-size: var(--fs-base);
+  letter-spacing: .12em;
   transition: all .3s;
 }
 .btn-outline:hover {
@@ -149,26 +182,30 @@ a:hover { color: var(--gold-soft); }
 .nav-inner {
   max-width: 1200px; margin: 0 auto;
   display: flex; align-items: center; justify-content: space-between;
-  height: 64px;
+  height: 72px;
 }
 .nav-logo {
   font-family: 'Noto Serif TC', serif;
-  font-size: 1.4rem; font-weight: 900;
+  font-size: 1.5rem; font-weight: 900;
   color: var(--gold); letter-spacing: .2em;
 }
 .nav-links {
-  display: flex; gap: 2rem; list-style: none;
+  display: flex; gap: 1.5rem; list-style: none;
+  align-items: center; flex-wrap: nowrap;
 }
 .nav-links a {
-  font-size: .88rem; letter-spacing: .12em;
+  font-size: var(--fs-sm); letter-spacing: .06em;
   color: var(--text-muted);
+  white-space: nowrap;
+  padding: .5rem .15rem;
 }
 .nav-links a:hover, .nav-links a.active { color: var(--gold); }
 .nav-mobile-btn {
   display: none;
   background: none; border: none;
-  color: var(--gold); font-size: 1.5rem;
+  color: var(--gold); font-size: 1.9rem;
   cursor: pointer;
+  min-width: var(--tap); min-height: var(--tap);
 }
 
 /* ---- Sections ---- */
@@ -189,7 +226,7 @@ a:hover { color: var(--gold-soft); }
   text-align: center;
   color: var(--text-muted);
   margin-bottom: 3.5rem;
-  font-size: .95rem;
+  font-size: var(--fs-base);
 }
 
 /* ---- Cards ---- */
@@ -205,17 +242,17 @@ a:hover { color: var(--gold-soft); }
   box-shadow: 0 20px 60px rgba(0,0,0,.4);
 }
 .card-icon {
-  font-size: 2.5rem;
+  font-size: 2.6rem;
   margin-bottom: 1.2rem;
 }
 .card-title {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   margin-bottom: .8rem;
 }
 .card-text {
   color: var(--text-muted);
-  font-size: .92rem;
-  line-height: 1.8;
+  font-size: var(--fs-base);
+  line-height: 1.9;
 }
 
 /* ---- Grid ---- */
@@ -239,12 +276,12 @@ a:hover { color: var(--gold-soft); }
   position: relative;
 }
 .path-num {
-  width: 56px; height: 56px;
+  width: 62px; height: 62px;
   border: 2px solid var(--gold);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Noto Serif TC', serif;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--gold);
   flex-shrink: 0;
@@ -254,17 +291,17 @@ a:hover { color: var(--gold-soft); }
 .path-step:not(:last-child)::before {
   content: '';
   position: absolute;
-  left: 27px; top: 56px; bottom: 0;
+  left: 30px; top: 62px; bottom: 0;
   width: 2px;
   background: linear-gradient(to bottom, var(--gold), rgba(212,175,55,.2));
 }
 .path-content h4 {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   margin-bottom: .3rem;
 }
 .path-content p {
   color: var(--text-muted);
-  font-size: .88rem;
+  font-size: var(--fs-base);
 }
 
 /* ---- CTA Banner ---- */
@@ -287,7 +324,7 @@ a:hover { color: var(--gold-soft); }
 }
 .footer-logo {
   font-family: 'Noto Serif TC', serif;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: 900;
   color: var(--gold);
   letter-spacing: .2em;
@@ -302,40 +339,46 @@ a:hover { color: var(--gold-soft); }
 }
 .footer-links a {
   color: var(--text-muted);
-  font-size: .85rem;
+  font-size: var(--fs-sm);
   letter-spacing: .1em;
 }
 .footer-copy {
-  color: rgba(168,164,216,.5);
-  font-size: .8rem;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
 }
 
 /* ---- Tag ---- */
 .tag {
   display: inline-block;
-  padding: .25rem .8rem;
+  padding: .32rem .95rem;
   background: rgba(122,31,43,.4);
   border: 1px solid var(--burgundy);
   color: #e8a0a0;
-  font-size: .78rem;
+  font-size: var(--fs-xs);
   letter-spacing: .1em;
   margin-bottom: .5rem;
 }
 
 /* ---- 響應式 ---- */
-@media (max-width: 768px) {
+/* 導覽列切換門檻：字級放大後，橫列選單在 1200px 以下就會壓縮 logo／溢出內容區
+   （登入後的會員項目更長），提早換成漢堡選單反而更好讀、可點擊區更大。 */
+@media (max-width: 1199px) {
   .nav-links { display: none; }
   .nav-mobile-btn { display: block; }
   .nav-links.open {
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 64px; left: 0; right: 0;
+    top: 72px; left: 0; right: 0;
     background: rgba(15,23,42,.97);
     padding: 1.5rem 2rem;
-    gap: 1.2rem;
+    gap: 1.4rem;
     border-bottom: 1px solid rgba(212,175,55,.15);
   }
+  .nav-links a { display: block; font-size: var(--fs-base); padding: .65rem 0; }
+}
+
+@media (max-width: 768px) {
   .hero-title { letter-spacing: .15em; }
   .section { padding: 3.5rem 1.5rem; }
   .path-step { gap: 1.2rem; }
@@ -350,4 +393,10 @@ a:hover { color: var(--gold-soft); }
 .fade-in.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ---- 焦點框（低視力／鍵盤操作需要看得見「我現在在哪」）---- */
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
 }

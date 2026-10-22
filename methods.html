@@ -8,13 +8,13 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .page-header { padding-top:100px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
+    .page-header { padding-top:112px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
     .method-section { padding:4rem 2rem;max-width:900px;margin:0 auto; }
-    .method-title { font-size:1.8rem;margin-bottom:.5rem; }
-    .method-en { color:var(--text-muted);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:1.5rem; }
-    .method-body { color:var(--text-muted);line-height:2;margin-bottom:1.5rem; }
-    .method-steps li { padding:.4rem 0;border-bottom:1px solid rgba(212,175,55,.08);line-height:1.8; }
-    .method-steps li::before { content:'◆ ';color:var(--gold);font-size:.7rem; }
+    .method-title { font-size:2rem;margin-bottom:.5rem; }
+    .method-en { color:var(--text-muted);font-size:var(--fs-xs);letter-spacing:.2em;text-transform:uppercase;margin-bottom:1.5rem; }
+    .method-body { color:var(--text-muted);line-height:2.05;margin-bottom:1.5rem; }
+    .method-steps li { padding:.4rem 0;border-bottom:1px solid rgba(212,175,55,.08);line-height:1.9; }
+    .method-steps li::before { content:'◆ ';color:var(--gold);font-size:var(--fs-xs); }
   </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -42,7 +42,7 @@
     此功法重視覺知而非妄想，重視自然而非勉强。修持時只需舒適坐姿，保持脊椎正直，自然呼吸，覺察每一個念頭的生滅，不取不舍，如同旁觀者看河流一般。長期修持可達到心安、智慧開顯、身心和諧的效果。
   </p>
   <div style="background:rgba(26,39,68,.5);border:1px solid rgba(212,175,55,.1);padding:1.5rem;border-radius:4px;margin-bottom:2rem;">
-    <h4 style="color:var(--gold);font-family:'Noto Serif TC',serif;margin-bottom:1rem;font-size:1rem;">修持要點</h4>
+    <h4 style="color:var(--gold);font-family:'Noto Serif TC',serif;margin-bottom:1rem;font-size:var(--fs-base);">修持要點</h4>
     <ul class="method-steps" style="list-style:none;">
       <li>姿勢：舒適坐姿，脊椎自然正直，雙手結禪定印或自然放在膝上</li>
       <li>呼吸：自然呼吸，不控制、不改變，只是覺察呼吸的進出</li>
@@ -51,7 +51,7 @@
       <li>態度：輕鬆而不放逸，專注而不緊繃</li>
     </ul>
   </div>
-  <p class="method-body" style="font-size:.88rem;color:rgba(168,164,216,.6);">
+  <p class="method-body" style="font-size:var(--fs-base);color:var(--text-muted);">
     ※ 建議皈依後由師父教授完整功法，再行在家修持。如有問題可於共修時請教師兄姐。
   </p>
 </section>
@@ -70,7 +70,7 @@
     修持此法門需先建立正確的知見，了解本尊功德與願力，再進行觀想持誦。觀想時，先於心間觀想智慧火燒盡一切妄想雜念，然後於虛空中生起清淨壇城，本尊住於其中，放光普照，攝受一切眾生。
   </p>
   <div style="background:rgba(26,39,68,.5);border:1px solid rgba(212,175,55,.1);padding:1.5rem;border-radius:4px;margin-bottom:2rem;">
-    <h4 style="color:var(--gold);font-family:'Noto Serif TC',serif;margin-bottom:1rem;font-size:1rem;">修持步驟</h4>
+    <h4 style="color:var(--gold);font-family:'Noto Serif TC',serif;margin-bottom:1rem;font-size:var(--fs-base);">修持步驟</h4>
     <ul class="method-steps" style="list-style:none;">
       <li>前行：先修神念功法十五分鐘，心靜而後行</li>
       <li>加持：誦持本尊咒語（如有），以清淨心攝受</li>
@@ -95,7 +95,7 @@
     修持方式簡便，只需以清淨心、恭敬心轉動聖典輪藏（或持誦相應咒語），並發清淨願，即能與法界功德海連結。日常行住坐臥皆可修持，不受時間空間限制。
   </p>
   <div style="background:rgba(26,39,68,.5);border:1px solid rgba(212,175,55,.1);padding:1.5rem;border-radius:4px;">
-    <h4 style="color:var(--gold);font-family:'Noto Serif TC',serif;margin-bottom:1rem;font-size:1rem;">功德利益</h4>
+    <h4 style="color:var(--gold);font-family:'Noto Serif TC',serif;margin-bottom:1rem;font-size:var(--fs-base);">功德利益</h4>
     <ul style="list-style:none;color:var(--text-muted);line-height:2.2;">
       <li>✦ 為在世者：消災解厄、增長福慧、諸事順遂</li>
       <li>✦ 為往生者：超拔離苦、速往淨土蓮品高升</li>
@@ -135,14 +135,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
           const name = user.displayName || (user.email ? user.email.split('@')[0] : '會員');
           li.innerHTML =
-            `<span style="color:var(--gold);font-size:.85rem;">${name}</span>` +
-            `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-            `<a href="member.html" style="font-size:.85rem;">會員專區</a>` +
-            `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-            `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
+            `<span style="color:var(--gold);font-size:var(--fs-sm);">${name}</span>` +
+            `<span style="color:var(--text-muted);margin:0 .4rem;">|</span>` +
+            `<a href="member.html" style="font-size:var(--fs-sm);">會員專區</a>` +
+            `<span style="color:var(--text-muted);margin:0 .4rem;">|</span>` +
+            `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:var(--fs-sm);">登出</a>`;
         } else {
           li.innerHTML =
-            `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
+            `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:var(--fs-sm);">Gmail 登入</a>`;
         }
         nav.appendChild(li);
       });

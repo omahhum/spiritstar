@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .page-header { padding-top:100px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
+    .page-header { padding-top:112px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
     .benefit-item {
       display: flex;
       gap: 1.2rem;
@@ -20,18 +20,18 @@
     .benefit-icon {
       font-family: 'Noto Serif TC', serif;
       color: var(--gold);
-      font-size: .85rem;
+      font-size: var(--fs-sm);
       flex-shrink: 0;
       padding-top: .15rem;
     }
     .benefit-text {
       color: var(--text-muted);
-      line-height: 1.9;
-      font-size: .95rem;
+      line-height: 2;
+      font-size: var(--fs-base);
     }
     .benefit-text strong {
       color: var(--gold-soft);
-      font-weight: 600;
+      font-weight: 700;
     }
     .highlight-box {
       background: rgba(212,175,55,.06);
@@ -43,8 +43,8 @@
     }
     .highlight-box p {
       color: var(--gold-soft);
-      font-size: .95rem;
-      line-height: 1.8;
+      font-size: var(--fs-base);
+      line-height: 1.9;
     }
   </style>
   <!-- Firebase SDK -->
@@ -150,14 +150,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (user) {
         const name = user.displayName || (user.email ? user.email.split('@')[0] : '會員');
         li.innerHTML =
-          `<span style="color:var(--gold);font-size:.85rem;">${name}</span>` +
-          `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-          `<a href="member.html" style="font-size:.85rem;">會員專區</a>` +
-          `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-          `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
+          `<span style="color:var(--gold);font-size:var(--fs-sm);">${name}</span>` +
+          `<span style="color:var(--text-muted);margin:0 .4rem;">|</span>` +
+          `<a href="member.html" style="font-size:var(--fs-sm);">會員專區</a>` +
+          `<span style="color:var(--text-muted);margin:0 .4rem;">|</span>` +
+          `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:var(--fs-sm);">登出</a>`;
       } else {
         li.innerHTML =
-          `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
+          `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:var(--fs-sm);">Gmail 登入</a>`;
       }
       nav.appendChild(li);
     });

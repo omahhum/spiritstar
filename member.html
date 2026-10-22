@@ -12,28 +12,28 @@
   <script src="js/auth.js"></script>
   <script src="js/top-menu.js"></script>
   <style>
-    .page-header { padding-top:100px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
-    .form-input { width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.75rem 1rem;outline:none;transition:border .3s;font-family:'Noto Sans TC',sans-serif; }
+    .page-header { padding-top:112px;padding-bottom:60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#1a2744 0%,#0F172A 70%); }
+    .form-input { width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.45);color:var(--ivory);padding:.85rem 1rem;font-size:var(--fs-base);outline:none;transition:border .3s;font-family:'Noto Sans TC',sans-serif; }
     .form-input:focus { border-color:var(--gold); }
-    .form-input::placeholder { color:rgba(168,164,216,.45); }
-    .form-label { display:block;color:var(--gold);font-size:.85rem;letter-spacing:.1em;margin-bottom:.5rem; }
-    .profile-badge { display:inline-flex;align-items:center;gap:.5rem;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);padding:.4rem 1rem;border-radius:2px;font-size:.85rem;color:var(--gold-soft); }
-    .saved-banner { background:rgba(39,100,60,.4);border:1px solid #4caf7d;color:#9de8bb;padding:1rem 1.5rem;border-radius:4px;font-size:.92rem;text-align:center;display:none; }
-    .error-banner { background:rgba(122,31,43,.4);border:1px solid #c0392b;color:#ffcccc;padding:1rem 1.5rem;border-radius:4px;font-size:.92rem;text-align:center;display:none; }
+    .form-input::placeholder { color:var(--text-muted); }
+    .form-label { display:block;color:var(--gold);font-size:var(--fs-sm);letter-spacing:.1em;margin-bottom:.5rem; }
+    .profile-badge { display:inline-flex;align-items:center;gap:.5rem;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);padding:.4rem 1rem;border-radius:2px;font-size:var(--fs-sm);color:var(--gold-soft); }
+    .saved-banner { background:rgba(39,100,60,.4);border:1px solid #4caf7d;color:#9de8bb;padding:1rem 1.5rem;border-radius:4px;font-size:var(--fs-base);text-align:center;display:none; }
+    .error-banner { background:rgba(122,31,43,.4);border:1px solid #c0392b;color:#ffcccc;padding:1rem 1.5rem;border-radius:4px;font-size:var(--fs-base);text-align:center;display:none; }
     .form-row { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
     @media (max-width:600px) { .form-row { grid-template-columns:1fr; } }
     /* ── 會員 sidebar 佈局 ── */
     .member-layout { display:flex;gap:2rem;max-width:1100px;margin:0 auto;align-items:flex-start; }
-    .member-sidebar { flex:0 0 220px;position:sticky;top:100px; }
-    .member-sidebar a { display:flex;align-items:center;gap:.6rem;padding:.65rem 1rem;color:var(--text-muted);text-decoration:none;font-size:.88rem;border-left:3px solid transparent;transition:all .3s;border-radius:0 4px 4px 0; }
+    .member-sidebar { flex:0 0 220px;position:sticky;top:112px; }
+    .member-sidebar a { display:flex;align-items:center;gap:.6rem;padding:.8rem 1rem;color:var(--text-muted);text-decoration:none;font-size:var(--fs-base);border-left:3px solid transparent;transition:all .3s;border-radius:0 4px 4px 0; }
     .member-sidebar a:hover { color:var(--gold-soft);background:rgba(212,175,55,.06);border-left-color:rgba(212,175,55,.3); }
     .member-sidebar a.active { color:var(--gold);background:rgba(212,175,55,.1);border-left-color:var(--gold); }
-    .member-sidebar a .icon { font-size:1.1rem;flex-shrink:0; }
+    .member-sidebar a .icon { font-size:1.15rem;flex-shrink:0; }
     .member-content { flex:1;min-width:0; }
     .member-section { display:none; }
     .member-section.active { display:block; }
     .member-mobile-nav { display:none;margin-bottom:1.5rem; }
-    .member-mobile-nav select { width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.7rem 1rem;font-size:.9rem;outline:none;border-radius:4px; }
+    .member-mobile-nav select { width:100%;background:rgba(26,39,68,.6);border:1px solid rgba(212,175,55,.2);color:var(--ivory);padding:.7rem 1rem;font-size:var(--fs-base);outline:none;border-radius:4px; }
     @media (max-width:768px) {
       .member-layout { flex-direction:column; }
       .member-sidebar { display:none; }
@@ -48,7 +48,7 @@
 
 <!-- Login gate -->
 <div id="loginGate" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;">
-  <h2 style="font-family:'Noto Serif TC',serif;color:var(--gold);font-size:2rem;margin-bottom:1rem;">請先登入</h2>
+  <h2 style="font-family:'Noto Serif TC',serif;color:var(--gold);font-size:2.1rem;margin-bottom:1rem;">請先登入</h2>
   <p style="color:var(--text-muted);margin-bottom:2rem;">登入後即可使用會員專區</p>
   <button onclick="firebaseAuth.signInWithGoogle()" class="btn-gold">用 Gmail 登入</button>
 </div>
@@ -70,9 +70,9 @@
               <span>✓ 已登入</span>
               <span id="userName"></span>
             </div>
-            <p id="userEmail" style="color:var(--text-muted);font-size:.85rem;margin-top:.5rem;"></p>
+            <p id="userEmail" style="color:var(--text-muted);font-size:var(--fs-sm);margin-top:.5rem;"></p>
           </div>
-          <button onclick="firebaseAuth.signOut();location.reload();" class="btn-outline" style="padding:.5rem 1.2rem;font-size:.82rem;">登出</button>
+          <button onclick="firebaseAuth.signOut();location.reload();" class="btn-outline" style="padding:.7rem 1.4rem;font-size:var(--fs-sm);">登出</button>
         </div>
       </div>
     </div>
@@ -128,23 +128,23 @@
           <!-- 已皈依提示 -->
           <div id="refugeeBanner" class="card fade-in" style="display:none;margin-bottom:1.5rem;background:rgba(212,175,55,.06);">
             <div style="text-align:center;padding:2rem;">
-              <div style="font-size:2.5rem;margin-bottom:.5rem;">🙏</div>
-              <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:.5rem;">已完成皈依資料</h3>
-              <p id="refugeeGreeting" style="color:var(--gold-soft);font-size:1rem;"></p>
-              <p style="color:var(--text-muted);font-size:.85rem;margin-top:1rem;">感恩您的發心，相關法務訊息將於日後通知。</p>
-              <button onclick="showEditForm()" class="btn-outline" style="margin-top:1rem;padding:.5rem 1.2rem;font-size:.85rem;" disabled>修改資料（載入中…）</button>
+              <div style="font-size:2.6rem;margin-bottom:.5rem;">🙏</div>
+              <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.5rem;margin-bottom:.5rem;">已完成皈依資料</h3>
+              <p id="refugeeGreeting" style="color:var(--gold-soft);font-size:var(--fs-base);"></p>
+              <p style="color:var(--text-muted);font-size:var(--fs-sm);margin-top:1rem;">感恩您的發心，相關法務訊息將於日後通知。</p>
+              <button onclick="showEditForm()" class="btn-outline" style="margin-top:1rem;padding:.5rem 1.2rem;font-size:var(--fs-sm);" disabled>修改資料（載入中…）</button>
             </div>
           </div>
 
           <!-- 查詢中提示 -->
-          <div id="checkingStatus" style="display:none;text-align:center;padding:2rem;color:var(--text-muted);font-size:.9rem;">
+          <div id="checkingStatus" style="display:none;text-align:center;padding:2rem;color:var(--text-muted);font-size:var(--fs-base);">
             查詢皈依資料中⋯
           </div>
 
           <!-- 皈依資料表單 -->
           <div class="card" id="memberFormCard" style="margin-top:1.5rem;">
-            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:.3rem;">皈依資料</h3>
-            <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">請填寫以下資料即可完成皈依報名</p>
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.35rem;margin-bottom:.3rem;">皈依資料</h3>
+            <p style="color:var(--text-muted);font-size:var(--fs-sm);margin-bottom:1.5rem;">請填寫以下資料即可完成皈依報名</p>
 
             <form id="memberForm">
               <!-- 姓名 -->
@@ -207,48 +207,48 @@
         <!-- ═══ 報名記錄（空）═══ -->
         <div id="section-records" class="member-section">
           <div class="card">
-            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">📜 報名記錄</h3>
-            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.35rem;margin-bottom:1rem;">📜 報名記錄</h3>
+            <p style="color:var(--text-muted);font-size:var(--fs-base);">此功能即將開放，敬請期待。</p>
           </div>
         </div>
 
         <!-- ═══ 光明燈（空）═══ -->
         <div id="section-light" class="member-section">
           <div class="card">
-            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">💡 光明燈</h3>
-            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.35rem;margin-bottom:1rem;">💡 光明燈</h3>
+            <p style="color:var(--text-muted);font-size:var(--fs-base);">此功能即將開放，敬請期待。</p>
           </div>
         </div>
 
         <!-- ═══ 專屬法門（空）═══ -->
         <div id="section-dharma" class="member-section">
           <div class="card">
-            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">📖 專屬法門</h3>
-            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.35rem;margin-bottom:1rem;">📖 專屬法門</h3>
+            <p style="color:var(--text-muted);font-size:var(--fs-base);">此功能即將開放，敬請期待。</p>
           </div>
         </div>
 
         <!-- ═══ 法會行事曆（空）═══ -->
         <div id="section-calendar" class="member-section">
           <div class="card">
-            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">📅 法會行事曆</h3>
-            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.35rem;margin-bottom:1rem;">📅 法會行事曆</h3>
+            <p style="color:var(--text-muted);font-size:var(--fs-base);">此功能即將開放，敬請期待。</p>
           </div>
         </div>
 
         <!-- ═══ 法寶下載（空）═══ -->
         <div id="section-download" class="member-section">
           <div class="card">
-            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">📦 法寶下載</h3>
-            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.35rem;margin-bottom:1rem;">📦 法寶下載</h3>
+            <p style="color:var(--text-muted);font-size:var(--fs-base);">此功能即將開放，敬請期待。</p>
           </div>
         </div>
 
         <!-- ═══ 功德統計（空）═══ -->
         <div id="section-merit" class="member-section">
           <div class="card">
-            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.3rem;margin-bottom:1rem;">🏆 功德統計</h3>
-            <p style="color:var(--text-muted);font-size:.9rem;">此功能即將開放，敬請期待。</p>
+            <h3 style="color:var(--gold);font-family:'Noto Serif TC',serif;font-size:1.35rem;margin-bottom:1rem;">🏆 功德統計</h3>
+            <p style="color:var(--text-muted);font-size:var(--fs-base);">此功能即將開放，敬請期待。</p>
           </div>
         </div>
 
@@ -276,14 +276,14 @@ function updateAuthNav(user) {
   if (user) {
     const name = user.displayName || (user.email ? user.email.split('@')[0] : '會員');
     li.innerHTML =
-      `<span style="color:var(--gold);font-size:.85rem;">${name}</span>` +
-      `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-      `<a href="member.html" style="font-size:.85rem;">會員專區</a>` +
-      `<span style="color:rgba(168,164,216,.4);margin:0 .4rem;">|</span>` +
-      `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:.85rem;">登出</a>`;
+      `<span style="color:var(--gold);font-size:var(--fs-sm);">${name}</span>` +
+      `<span style="color:var(--text-muted);margin:0 .4rem;">|</span>` +
+      `<a href="member.html" style="font-size:var(--fs-sm);">會員專區</a>` +
+      `<span style="color:var(--text-muted);margin:0 .4rem;">|</span>` +
+      `<a href="#" onclick="firebaseAuth.signOut();location.reload();" style="font-size:var(--fs-sm);">登出</a>`;
   } else {
     li.innerHTML =
-      `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:.85rem;">Gmail 登入</a>`;
+      `<a href="#" onclick="firebaseAuth.signInWithGoogle()" style="font-size:var(--fs-sm);">Gmail 登入</a>`;
   }
   nav.appendChild(li);
 }

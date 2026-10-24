@@ -33,6 +33,14 @@
       color: var(--gold-soft);
       font-weight: 700;
     }
+    /* 上標（如 10^3758096384）：預設 sup 會縮成 13.4px 違反全站 15.6px 下限，
+       故鎖在 --fs-xs（15.6px）再上移，視覺仍為上標。 */
+    .benefit-text sup {
+      font-size: var(--fs-xs);
+      vertical-align: baseline;
+      position: relative;
+      top: -.5em;
+    }
     .highlight-box {
       background: rgba(212,175,55,.06);
       border: 1px solid rgba(212,175,55,.2);

@@ -29,7 +29,7 @@
 
   host.outerHTML =
 `<footer class="footer">
-  <div class="footer-logo">聖輪宗甘露王院</div>
+  <div class="footer-logo">聖輪宗</div>
   <div class="footer-links">
     ${FOOTER_LINKS.map(l => `<a href="${B}${l.href}">${l.label}</a>`).join('\n    ')}
   </div>

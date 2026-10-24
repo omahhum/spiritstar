@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>認捐單 — 佛頂金輪大壇 — 聖輪宗</title>
-  <meta name="description" content="佛頂金輪大壇認捐單。填寫格位編號與聯絡資料，完成認捐登錄。">
+  <title>認造單 — 佛頂金輪大壇 — 聖輪宗</title>
+  <meta name="description" content="佛頂金輪大壇認造單。填寫格位編號與聯絡資料，完成認造登錄。">
   <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/golden-wheel.css">
@@ -20,17 +20,17 @@
   <nav id="top-nav"></nav>
 
   <header class="page-header">
-    <h1>認捐單</h1>
+    <h1>認造單</h1>
     <p>604 個位置，你只需要一格</p>
   </header>
 
   <section class="section">
-    <h2 class="section-title fade-in">填寫認捐資料</h2>
+    <h2 class="section-title fade-in">填寫認造資料</h2>
     <p class="section-sub fade-in">
       送出後我們會以 Email 與您聯繫付款與感謝函事宜。神像製作完成時，會寄送該尊的實拍照片給您。
     </p>
     <p class="fade-in" style="font-size:var(--fs-base);">
-      各級認捐金額對應的回饋項目，見<a href="index.html#howto">分級回饋對照表</a>。
+      各級認造金額對應的回饋項目，見<a href="index.html#howto">分級回饋對照表</a>。
     </p>
 
     <div id="gwMsg"></div>
@@ -46,7 +46,7 @@
         <label for="slot">格位編號 <span class="req">＊</span></label>
         <input type="text" id="slot" name="slot" inputmode="numeric" pattern="[0-9]{4}"
                placeholder="例如 0001" required>
-        <div class="hint" id="gwSlotInfo">可回<a href="index.html">格子牆</a>按該尊的「認捐此尊」自動帶入，或直接輸入四位數編號。</div>
+        <div class="hint" id="gwSlotInfo">可回<a href="index.html">格子牆</a>按該尊的「認造此尊」自動帶入，或直接輸入四位數編號。</div>
       </div>
 
       <div class="row">
@@ -70,7 +70,7 @@
       <div class="row">
         <label for="email">Email <span class="req">＊</span></label>
         <input type="email" id="email" name="email" required autocomplete="email">
-        <div class="hint">用於認捐確認、製作完成照片、安奉通知與年度法會通知。</div>
+        <div class="hint">用於認造確認、製作完成照片、安奉通知與年度法會通知。</div>
       </div>
 
       <div class="row">
@@ -107,20 +107,21 @@
 
       <div class="row check">
         <input type="checkbox" id="agreeMerit" name="agreeMerit" value="true">
-        <label for="agreeMerit">我同意將姓名公開於功德芳名錄（共修中心掛軸／裱框大圖）與官網電子名錄。</label>
+        <label for="agreeMerit">我同意將姓名公開於功德芳名錄（安置共修中心，法會懸掛）與官網電子名錄。</label>
       </div>
 
       <div class="row check">
-        <input type="checkbox" id="agreeTerms" name="agreeTerms" value="true" required>
+        <input type="checkbox" id="agreeTerms" name="agreeTerms" value="true" required
+               aria-required="true" aria-describedby="gwMsg">
         <label for="agreeTerms">
-          我已了解：認捐是隨喜造像、成就道場的功德行為，取得的是功德與回饋項目的參加資格，
+          <span class="req">＊</span> 我已了解：認造是隨喜造像、成就道場的功德行為，取得的是功德與回饋項目的參加資格，
           不是任何一尊造像的所有權、處分權或搬遷權；壇城建成後所有造像屬道場所有。
           姓名僅登錄於名錄，<strong>不裝入造像、不於佛像本體刻名</strong>。
         </label>
       </div>
 
       <div class="row">
-        <button type="submit" class="btn-gold">送出認捐</button>
+        <button type="submit" class="btn-gold">送出認造登記表</button>
         <a class="btn-outline" href="index.html" style="margin-left:.6rem;">回格子牆</a>
       </div>
     </form>

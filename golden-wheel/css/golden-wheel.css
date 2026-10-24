@@ -95,6 +95,9 @@
 .gw-card-btn:hover { background: #D4AF37; color: #0F172A; border-color: #D4AF37; }
 .gw-card-state { display: flex; align-items: center; justify-content: center; min-height: var(--tap);
   text-align: center; font-size: var(--fs-sm); letter-spacing: .08em; }
+/* 非可認造格「感謝 {認造者} 認造」一行小字：color 繼承卡片文字色
+   （已認造=深字、製作中/已完成=淺字），實色、字級 ≥ --fs-sm，符合低視力規範 */
+.gw-card-thanks { font-size: var(--fs-sm); line-height: 1.55; color: inherit; }
 
 /* ── 分級表 ── */
 .gw-tier { width: 100%; border-collapse: collapse; font-size: var(--fs-base); }

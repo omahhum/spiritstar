@@ -149,13 +149,13 @@ const GW = (() => {
     function renderCards() {
       const list = listNow();
       const cnt = st => list.filter(s => statusClass(s.status) === st).length;
-      const open = cnt('可認捐'), making = cnt('製作中'), done = cnt('已完成');
+      const open = cnt('可認捐');
+      const taken = list.length - open;   // 已認造＝所有非「可認造」格（含製作中／已完成，全頁不顯示其標註）
       const k = curKw.trim();
       summary.textContent =
         (k ? '搜尋「' + k + '」· ' : '') +
         (curGroup ? curZone + ' · ' + curGroup : curZone) + '　共 ' + list.length + ' 格' +
-        '　可認造 ' + open + '　已認造 ' + (list.length - open - making - done) +
-        '　製作中 ' + making + '　已完成 ' + done;
+        '　可認造 ' + open + '　已認造 ' + taken;
 
       if (!list.length) {
         cardsHost.innerHTML = '<p class="text-muted">沒有符合的格位。可換一個關鍵字（編號或尊名），或換分頁。</p>';

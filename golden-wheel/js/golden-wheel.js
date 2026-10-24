@@ -6,7 +6,7 @@
  *   merit-list.html  → GW.initMerit()
  *
  * 格子牆為「卡片 ＋ 分頁（tab）」：第一層分區，第二層群組；卡片直接顯示編號／尊名／
- * 金額／群組，可認捐的卡片自帶「認捐此尊」按鈕，不再使用彈窗選位面板。
+ * 金額／群組，可認造的卡片自帶「認造此尊」按鈕，不再使用彈窗選位面板。
  * （2026-10-19 依使用者指示改版，原小格＋彈窗設計見 00_網站架構與內容規劃.md §2 修訂註記。）
  *
  * 部署前：把 GAS_URL 換成部署後的 /exec 網址。
@@ -63,7 +63,7 @@ const GW = (() => {
       d = await getSlots();
     } catch (err) {
       host.innerHTML = '<p class="text-muted">格位資料目前無法載入（' + err.message +
-        '）。<br>請稍後重新整理，或直接來信詢問可認捐的格位。</p>';
+        '）。<br>請稍後重新整理，或直接來信詢問可認造的格位。</p>';
       return;
     }
 
@@ -85,8 +85,8 @@ const GW = (() => {
     const bar = document.getElementById('gwProgress');
     if (bar) {
       const taken = d.total - d.open;
-      bar.innerHTML = counter(taken, '已認捐格數') + counter(d.open, '仍可認捐') +
-        counter(d.total, '總格數') + counter((taken / d.total * 100).toFixed(1) + '%', '完成比例');
+      bar.innerHTML = counter(taken, '已認造格數') + counter(d.open, '仍可認造') +
+        counter(d.total, '總格數') + counter((taken / d.total * 100).toFixed(1) + '%', '認造比例');
     }
 
     host.innerHTML =
@@ -154,7 +154,7 @@ const GW = (() => {
       summary.textContent =
         (k ? '搜尋「' + k + '」· ' : '') +
         (curGroup ? curZone + ' · ' + curGroup : curZone) + '　共 ' + list.length + ' 格' +
-        '　可認捐 ' + open + '　已認捐 ' + (list.length - open - making - done) +
+        '　可認造 ' + open + '　已認造 ' + (list.length - open - making - done) +
         '　製作中 ' + making + '　已完成 ' + done;
 
       if (!list.length) {
@@ -165,16 +165,26 @@ const GW = (() => {
       cardsHost.innerHTML = list.map(s => {
         const st = statusClass(s.status);
         const openSlot = st === '可認捐';
+        // 顯示用標籤：把狀態值的「認捐」顯示成「認造」；data-s 仍用原始值 drive CSS 上色
+        const stLabel = st === '已認捐' ? '已認造' : (st === '可認捐' ? '可認造' : st);
+        // 卡片底部內容（依優先序）：
+        //  可認造          → 「認造此尊」按鈕
+        //  非可認造＋有認造者 → 「感謝 X 認造」感謝列（公開全名／未公開姓OO，均帶稱謂）
+        //  非可認造＋無資料   → 僅「已認造」保底顯示「已認造」；「製作中／已完成」暫態取消標註（留白）
+        const footContent = openSlot
+          ? '<a class="gw-card-btn" href="donate.html?slot=' + encodeURIComponent(s.id) + '">認造此尊</a>'
+          : (s.donorDisplay
+              ? '<div class="gw-card-thanks">感謝 ' + esc(s.donorDisplay) +
+                '師兄師姊' + ' 認造</div>'
+              : (st === '已認捐' ? '<span class="gw-card-state">' + esc(stLabel) + '</span>' : ''));
         return '<article class="gw-card" data-s="' + esc(st) + '" data-id="' + esc(s.id) + '">' +
           '<div class="gw-card-top"><span class="gw-card-id">' + esc(s.id) + '</span>' +
           '<span class="gw-card-price">' + money(s.price) + '</span></div>' +
           '<h4 class="gw-card-name">' + esc(s.name || '（待補）') + '</h4>' +
           '<div class="gw-card-meta">' + esc(s.zone) + ' · ' + esc(s.group) +
           (s.level ? ' · ' + esc(s.level) + ' 級' : '') + '</div>' +
-          '<div class="gw-card-foot">' + (openSlot
-            ? '<a class="gw-card-btn" href="donate.html?slot=' + encodeURIComponent(s.id) + '">認捐此尊</a>'
-            : '<span class="gw-card-state">' + esc(st) + '</span>') +
-          '</div></article>';
+          (footContent ? '<div class="gw-card-foot">' + footContent + '</div>' : '') +
+          '</article>';
       }).join('');
     }
 
@@ -206,7 +216,7 @@ const GW = (() => {
     renderCards();
   }
 
-  // ── 認捐表單 ────────────────────────────────────────
+  // ── 認造表單 ────────────────────────────────────────
   async function initDonate() {
     const form = document.getElementById('gwForm');
     if (!form) return;
@@ -229,11 +239,11 @@ const GW = (() => {
       if (!s) { slotInfo.textContent = '查無編號 ' + id + '，請確認後再填。'; return; }
       if (statusClass(s.status) !== '可認捐') {
         slotInfo.innerHTML = '<strong>' + s.name + '</strong>（' + s.id + '）目前狀態為「' +
-          s.status + '」，已無法認捐，請回上一頁另選一格。';
+          s.status + '」，已無法認造，請回上一頁另選一格。';
         return;
       }
-      slotInfo.innerHTML = '認捐標的：<strong>' + s.name + '</strong>（編號 ' + s.id +
-        '，' + s.zone + '）<br>認捐金額：<strong>NT$ ' +
+      slotInfo.innerHTML = '認造標的：<strong>' + s.name + '</strong>（編號 ' + s.id +
+        '，' + s.zone + '）<br>認造金額：<strong>NT$ ' +
         Number(s.price).toLocaleString() + '</strong>';
     }
 
@@ -246,6 +256,16 @@ const GW = (() => {
       const btn = form.querySelector('[type=submit]');
       msg.className = '';
       msg.textContent = '';
+
+      // 必選：未勾「我已了解」不得送出（表單為 novalidate，瀏覽器不擋，需手動檢查）
+      const agreeTerms = form.querySelector('[name=agreeTerms]');
+      if (agreeTerms && !agreeTerms.checked) {
+        msg.className = 'err';
+        msg.textContent = '請先勾選「我已了解」，才能送出認造登記。';
+        agreeTerms.focus();
+        agreeTerms.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
 
       const fd = new FormData(form);
       const body = new URLSearchParams();
@@ -269,7 +289,7 @@ const GW = (() => {
         if (!r.ok) throw new Error(r.error || '送出失敗');
         sessionStorage.removeItem(CACHE_KEY);
         msg.className = 'ok';
-        msg.innerHTML = '認捐已登錄。<br>編號 <strong>' + r.id + '</strong>　' +
+        msg.innerHTML = '認造已登錄。<br>編號 <strong>' + r.id + '</strong>　' +
           r.name + '　NT$ ' + Number(r.price).toLocaleString() +
           '<br>為防止詐騙利用，請私訊香海師姊確認並索取帳號或其它付款方式。我們也會以 Email 與您聯繫付款與感謝函事宜，並在神像製作完成時寄送實拍照片。';
         form.reset();

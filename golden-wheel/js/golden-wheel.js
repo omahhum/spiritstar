@@ -175,7 +175,8 @@ const GW = (() => {
           ? '<a class="gw-card-btn" href="donate.html?slot=' + encodeURIComponent(s.id) + '">認造此尊</a>'
           : (s.donorDisplay
               ? '<div class="gw-card-thanks">感謝 ' + esc(s.donorDisplay) +
-                '師兄師姊' + ' 認造</div>'
+                ((s.donorSalutation || '').trim() ? esc(s.donorSalutation.trim()) : '師兄師姊') +
+                ' 認造</div>'
               : (st === '已認捐' ? '<span class="gw-card-state">' + esc(stLabel) + '</span>' : ''));
         return '<article class="gw-card" data-s="' + esc(st) + '" data-id="' + esc(s.id) + '">' +
           '<div class="gw-card-top"><span class="gw-card-id">' + esc(s.id) + '</span>' +

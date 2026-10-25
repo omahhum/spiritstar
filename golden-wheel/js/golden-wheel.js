@@ -263,7 +263,7 @@ const GW = (() => {
         msg.className = 'err';
         msg.textContent = '請先勾選「我已了解」，才能送出認造登記。';
         agreeTerms.focus();
-        agreeTerms.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
 

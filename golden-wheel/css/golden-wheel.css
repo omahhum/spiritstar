@@ -79,6 +79,9 @@
   min-height: 152px; padding: .85rem .95rem .9rem; border-radius: .5rem;
   background: #F8F5EE; color: #0F172A; border: 1px dashed rgba(212,175,55,.85); }
 .gw-card[data-s="已認捐"] { background: #D4AF37; border: 1px solid #B8952B; }
+/* 備用狀態底色（「製作中」「已完成」）：目前**不顯示**。
+   顯示層一律只輸出「可認捐」／「已認捐」兩種 data-s（見 js 的 stKey），
+   故這兩條規則不會被套用；保留於此供日後要顯示時直接啟用。 */
 .gw-card[data-s="製作中"] { background: #7A1F2B; border: 1px solid #5E1621; color: #F8F5EE; }
 .gw-card[data-s="已完成"] { background: #0F172A; border: 1px solid #D4AF37; color: #F8F5EE; }
 .gw-card-top { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }

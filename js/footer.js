@@ -23,6 +23,7 @@
     { href: 'gospel.html',  label: '聖輪福音' },
     { href: 'methods.html', label: '修行法門' },
     { href: 'golden-wheel/index.html', label: '佛頂金輪大壇' },
+    { href: 'forms/puja-form-month.html', label: '法會參贊' },
     { href: 'refuge.html',  label: '皈依專區' },
     { href: 'contact.html', label: '聯絡我們' },
   ];

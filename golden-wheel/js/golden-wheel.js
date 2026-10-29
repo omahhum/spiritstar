@@ -165,20 +165,23 @@ const GW = (() => {
       cardsHost.innerHTML = list.map(s => {
         const st = statusClass(s.status);
         const openSlot = st === '可認捐';
-        // 顯示用標籤：把狀態值的「認捐」顯示成「認造」；data-s 仍用原始值 drive CSS 上色
-        const stLabel = st === '已認捐' ? '已認造' : (st === '可認捐' ? '可認造' : st);
+        // 顯示層只呈現兩種狀態：「可認造」／「已認造」。
+        // 試算表的「製作中」「已完成」為**備用狀態，目前不顯示**（一律以「已認造」呈現）；
+        // 其專屬底色規則保留在 golden-wheel.css 備用。
+        const stLabel = openSlot ? '可認造' : '已認造';
+        const stKey = openSlot ? '可認捐' : '已認捐';   // data-s 只輸出這兩種值
         // 卡片底部內容（依優先序）：
-        //  可認造          → 「認造此尊」按鈕
+        //  可認造            → 「認造此尊」按鈕
         //  非可認造＋有認造者 → 「感謝 X 認造」感謝列（公開全名／未公開姓OO，均帶稱謂）
-        //  非可認造＋無資料   → 僅「已認造」保底顯示「已認造」；「製作中／已完成」暫態取消標註（留白）
+        //  非可認造＋無資料   → 保底顯示「已認造」
         const footContent = openSlot
           ? '<a class="gw-card-btn" href="donate.html?slot=' + encodeURIComponent(s.id) + '">認造此尊</a>'
           : (s.donorDisplay
               ? '<div class="gw-card-thanks">感謝 ' + esc(s.donorDisplay) +
                 ((s.donorSalutation || '').trim() ? esc(s.donorSalutation.trim()) : '師兄師姊') +
                 ' 認造</div>'
-              : (st === '已認捐' ? '<span class="gw-card-state">' + esc(stLabel) + '</span>' : ''));
-        return '<article class="gw-card" data-s="' + esc(st) + '" data-id="' + esc(s.id) + '">' +
+              : '<span class="gw-card-state">' + esc(stLabel) + '</span>');
+        return '<article class="gw-card" data-s="' + esc(stKey) + '" data-id="' + esc(s.id) + '">' +
           '<div class="gw-card-top"><span class="gw-card-id">' + esc(s.id) + '</span>' +
           '<span class="gw-card-price">' + money(s.price) + '</span></div>' +
           '<h4 class="gw-card-name">' + esc(s.name || '（待補）') + '</h4>' +
